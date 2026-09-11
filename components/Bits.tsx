@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { iconForUrl } from '@/components/Icons'
 import type { Collection, Item } from '@/lib/types'
 import { dateText, detailHref } from '@/lib/types'
 
@@ -49,31 +50,38 @@ function hostOf(url: string): string {
  * rows. That is what lets a project point at both the live site and its
  * source without the schema growing a column per kind of link.
  */
+/** One link, with its service's mark when the site recognises the host. */
+function OneLink({ href, label, tone }: { href: string; label: string; tone: 'primary' | 'quiet' }) {
+  const Icon = iconForUrl(href)
+  const colour = tone === 'primary'
+    ? 'text-accent hover:underline'
+    : 'text-dim hover:text-accent'
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className={`inline-flex items-center gap-1.5 text-sm underline-offset-4 ${colour} ${Icon ? '' : 'underline'}`}
+    >
+      {Icon && <Icon size={16} />}
+      {label}
+      {/* The mark already says "this leaves the site", so the arrow would be
+          saying it twice. */}
+      {!Icon && ' ↗'}
+    </a>
+  )
+}
+
 export function Links({ item, className = '' }: { item: Item; className?: string }) {
   const extra = item.media.filter((m) => m.kind === 'link')
   if (!item.url && extra.length === 0) return null
   return (
-    <div className={`flex flex-wrap gap-x-4 gap-y-1 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 ${className}`}>
       {item.url && (
-        <a
-          href={item.url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm text-accent underline-offset-4 hover:underline"
-        >
-          {item.urlLabel ?? hostOf(item.url)} ↗
-        </a>
+        <OneLink href={item.url} label={item.urlLabel ?? hostOf(item.url)} tone="primary" />
       )}
       {extra.map((m) => (
-        <a
-          key={m.id}
-          href={m.url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm text-dim underline underline-offset-4 hover:text-accent"
-        >
-          {m.caption ?? hostOf(m.url)} ↗
-        </a>
+        <OneLink key={m.id} href={m.url} label={m.caption ?? hostOf(m.url)} tone="quiet" />
       ))}
     </div>
   )

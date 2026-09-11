@@ -1,4 +1,4 @@
-import { InstagramIcon, MailIcon, YouTubeIcon } from './Icons'
+import { iconForUrl } from './Icons'
 
 export const CONTACT = {
   youtube: 'https://www.youtube.com/@orrknaan',
@@ -20,19 +20,23 @@ export default function Hero() {
       </p>
       {/* Negative margin pulls the first icon's padding back so the row lines
           up with the text above it rather than looking indented. */}
+      {/* Built from the same registry the item links use, so a service taught
+          to the site once shows up in both places. */}
       <nav className="mt-4 -ml-3 flex flex-wrap items-center gap-y-1">
-        <a href={CONTACT.youtube} target="_blank" rel="noreferrer"
-           aria-label="Orr Knaan on YouTube" className={hit}>
-          <YouTubeIcon />
-        </a>
-        <a href={CONTACT.instagram} target="_blank" rel="noreferrer"
-           aria-label="Orr Knaan on Instagram" className={hit}>
-          <InstagramIcon />
-        </a>
-        <a href={`mailto:${CONTACT.email}`}
-           aria-label={`Email ${CONTACT.email}`} className={hit}>
-          <MailIcon />
-        </a>
+        {([
+          ['Orr Knaan on YouTube', CONTACT.youtube],
+          ['Orr Knaan on Instagram', CONTACT.instagram],
+          [`Email ${CONTACT.email}`, `mailto:${CONTACT.email}`],
+        ] as const).map(([label, href]) => {
+          const Icon = iconForUrl(href)
+          return Icon ? (
+            <a key={href} href={href} aria-label={label}
+               target={href.startsWith('mailto:') ? undefined : '_blank'}
+               rel="noreferrer" className={hit}>
+              <Icon />
+            </a>
+          ) : null
+        })}
         {/* Text, because the octocat cannot be redrawn faithfully by hand. */}
         <a href={CONTACT.github} target="_blank" rel="noreferrer"
            className="ml-2 inline-flex h-11 items-center text-sm text-accent underline-offset-4 hover:underline">

@@ -46,3 +46,26 @@ export function MailIcon({ size = 21 }: { size?: number }) {
     </svg>
   )
 }
+
+/**
+ * The one place that knows which mark belongs to which service. Both the hero
+ * and every item link go through this, so pasting a YouTube URL into /admin
+ * gets the logo with no code change — and teaching the site a new service is
+ * one line here rather than an edit in each place links are drawn.
+ *
+ * Returning null is a real answer: GitHub has no mark here on purpose, and an
+ * unknown host should simply render as text.
+ */
+export function iconForUrl(url: string): ((p: { size?: number }) => React.ReactElement) | null {
+  let host: string
+  try {
+    const u = new URL(url)
+    if (u.protocol === 'mailto:') return MailIcon
+    host = u.hostname.replace(/^www\./, '').toLowerCase()
+  } catch {
+    return url.startsWith('mailto:') ? MailIcon : null
+  }
+  if (host === 'youtube.com' || host === 'youtu.be' || host === 'm.youtube.com') return YouTubeIcon
+  if (host === 'instagram.com') return InstagramIcon
+  return null
+}
