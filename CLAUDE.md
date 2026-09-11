@@ -93,6 +93,24 @@ regenerate it, render at 4x and downsample, and fit the mark to its *ink* box
 (`actualBoundingBoxLeft/Right`), not its advance width: K's diagonal overhangs
 the advance width and pushes the mark off-canvas at small sizes.
 
+## Deployment
+
+Live at **https://orrknaan.com** (the apex serves; `www` 308s to it, matching
+the other `*.orrknaan.com` subdomains, none of which use `www`).
+
+- Repo: `github.com/orr-lab/portfolio`, public, connected to the Vercel project
+  `portfolio` — pushing to `main` deploys production.
+- Database: Neon resource `portfolio-db`. Blob store: `portfolio-media`.
+- Cloudflare holds DNS: the apex points at Vercel **DNS-only (grey cloud)**.
+  Proxying it would put Cloudflare in front of Vercel's own CDN and break
+  Next's image optimisation cache headers. Leave it grey.
+
+Public pages are static and revalidated on write: every server action in
+`app/admin/actions.ts` calls `revalidateSite()`, which clears the whole public
+tree. That breadth is deliberate — the nav bar is built from the collections
+table and appears on every page, and publishing one item can change whether
+its collection is listed at all, so almost any write can alter almost any page.
+
 ## Commands
 
 ```bash
@@ -104,8 +122,18 @@ npm run db:seed          # seed collections + items (idempotent)
 vercel env pull .env.local   # refresh Neon + Blob credentials
 ```
 
-`ADMIN_PASSWORD` is a Vercel env var. It is never committed, never written to a
-file, and never printed. Rotate with `vercel env add ADMIN_PASSWORD production`.
+`ADMIN_PASSWORD` is a Vercel env var, set for Production only. It is never
+committed, never written to a file, and never printed. Rotate with
+`vercel env add ADMIN_PASSWORD production` — note that rotating it invalidates
+every existing admin session, because the cookie is derived from it.
+
+To use `/admin` on localhost, add it for development too
+(`vercel env add ADMIN_PASSWORD development`) and re-run `vercel env pull`.
+
+**Every server action re-checks the session.** A server action is its own
+public HTTP endpoint, so the redirect in `app/admin/(authed)/layout.tsx` is
+navigation convenience, not the security boundary. The same is true of
+`app/api/blob/upload/route.ts`, which checks before a token exists.
 
 ## Writing code here
 
