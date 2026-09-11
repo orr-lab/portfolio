@@ -55,8 +55,8 @@ export default async function WorkPage({ params }: Props) {
           >
             ← {collection.title}
           </Link>
-          <h1 className="mt-6 text-3xl tracking-tight text-balance sm:text-4xl">{item.title}</h1>
-          {item.subtitle && <p className="mt-2 text-xl text-dim">{item.subtitle}</p>}
+          <h1 className="display mt-6 text-3xl text-balance sm:text-4xl">{item.title}</h1>
+          {item.subtitle && <p className="display mt-2 text-xl text-dim">{item.subtitle}</p>}
           {(item.dateLabel ?? item.year) && (
             <p className="mt-3 text-sm text-dim tabular-nums">{item.dateLabel ?? item.year}</p>
           )}
@@ -100,7 +100,7 @@ export default async function WorkPage({ params }: Props) {
           </div>
         )}
 
-        <footer className="mt-16 border-t border-rule py-10 text-sm text-dim">
+        <footer className="mt-14 py-10 text-sm text-dim">
           {new Date().getFullYear()}
         </footer>
       </div>

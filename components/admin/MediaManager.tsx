@@ -78,7 +78,7 @@ export default function MediaManager({
 
   return (
     <section className="mt-12 border-t border-rule pt-6">
-      <h2 className="text-sm tracking-widest uppercase text-dim">Media</h2>
+      <h2 className="eyebrow">Media</h2>
       <p className="mt-1 text-xs text-dim opacity-70">
         The first one is the cover.
       </p>

@@ -12,7 +12,7 @@ export default function Featured({ item }: { item: Item }) {
   const href = detailHref(item)
 
   return (
-    <section className="pb-20 sm:pb-28">
+    <section className="pb-16 sm:pb-24">
       {lead?.kind === 'embed' && <EmbedPlayer media={lead} />}
       {lead?.kind === 'image' && (
         <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16 / 9' }}>
@@ -23,8 +23,8 @@ export default function Featured({ item }: { item: Item }) {
       )}
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
         <div>
-          <h2 className="text-2xl sm:text-3xl">{item.title}</h2>
-          {item.subtitle && <p className="mt-1 text-lg text-dim">{item.subtitle}</p>}
+          <h2 className="display text-3xl sm:text-4xl">{item.title}</h2>
+          {item.subtitle && <p className="display mt-1 text-lg text-dim">{item.subtitle}</p>}
         </div>
         {(item.dateLabel ?? item.year) && (
           <p className="shrink-0 text-sm text-dim tabular-nums">

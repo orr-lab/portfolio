@@ -48,10 +48,10 @@ export default async function Hub() {
               key={collection.id}
               id={collection.slug}
               // scroll-margin keeps the heading clear of the sticky bar.
-              className="scroll-mt-20 border-t border-rule py-14 sm:py-20"
+              className="scroll-mt-24 border-t border-rule py-12 sm:py-16"
             >
-              <h2 className="text-sm tracking-widest uppercase text-dim">{collection.title}</h2>
-              {collection.blurb && <p className="mt-2 mb-8 text-lg">{collection.blurb}</p>}
+              <h2 className="eyebrow">{collection.title}</h2>
+              {collection.blurb && <p className="mt-3 mb-8 max-w-prose text-lg">{collection.blurb}</p>}
               <Layout items={shown} collection={collection} />
               {/* Only shown when there is genuinely more, which also guarantees
                   the count is plural and the noun reads correctly. */}

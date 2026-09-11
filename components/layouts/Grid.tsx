@@ -27,7 +27,7 @@ export default function Grid({ items, collection }: LayoutProps) {
                 <Cover media={image} sizes="(max-width: 640px) 100vw, 400px" />
               </div>
             )}
-            <h3 className="text-lg"><ItemTitle item={item} /></h3>
+            <h3 className="text-xl"><ItemTitle item={item} /></h3>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-3 text-sm">
               <Subtitle item={item} />
               <DateText item={item} collection={collection} />

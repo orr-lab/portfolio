@@ -35,7 +35,7 @@ export default async function AdminItems({
         return (
           <section key={c.id} className="mt-8">
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-sm tracking-widest uppercase text-dim">
+              <h2 className="eyebrow">
                 {c.title}
                 {!c.visible && <span className="ml-2 normal-case tracking-normal">(hidden)</span>}
               </h2>

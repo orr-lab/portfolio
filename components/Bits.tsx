@@ -7,9 +7,11 @@ import { dateText, detailHref } from '@/lib/types'
 export function ItemTitle({ item, className = '' }: { item: Item; className?: string }) {
   const href = detailHref(item)
   // Link does client-side navigation between pages instead of a full reload.
+  // The serif carries names and works; everything functional stays in the
+  // grotesque. Deciding it here keeps all seven layouts consistent.
   return href
-    ? <Link href={href} className={`${className} hover:text-accent`}>{item.title}</Link>
-    : <span className={className}>{item.title}</span>
+    ? <Link href={href} className={`display ${className} hover:text-accent`}>{item.title}</Link>
+    : <span className={`display ${className}`}>{item.title}</span>
 }
 
 /** Hebrew title, "arr. for piano" — whatever sits just under the title. */

@@ -10,7 +10,7 @@ export default function PasteUrl({ itemId }: { itemId: string }) {
   return (
     <form action={addPastedUrl} className="mt-8 border-t border-rule pt-6">
       <input type="hidden" name="itemId" value={itemId} />
-      <h2 className="text-sm tracking-widest uppercase text-dim">Paste a link</h2>
+      <h2 className="eyebrow">Paste a link</h2>
       <p className="mt-1 text-xs text-dim opacity-70">
         YouTube and Vimeo become players. Anything else becomes a link.
       </p>

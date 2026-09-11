@@ -187,7 +187,7 @@ export default function CollectionForm({
       </form>
 
       <section className="mt-10 border-t border-rule pt-6">
-        <h2 className="text-sm tracking-widest uppercase text-dim">Preview</h2>
+        <h2 className="eyebrow">Preview</h2>
         <p className="mt-1 text-xs text-dim opacity-70">
           The first three items, drawn with the settings above — before saving.
         </p>

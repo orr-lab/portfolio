@@ -13,9 +13,9 @@ export default function Hero() {
   const hit = 'inline-flex h-11 w-11 items-center justify-center text-accent transition-opacity hover:opacity-70'
 
   return (
-    <header className="pt-20 pb-16 sm:pt-28 sm:pb-24">
-      <h1 className="text-4xl tracking-tight sm:text-5xl">Orr Knaan</h1>
-      <p className="mt-4 max-w-lg text-lg text-dim">
+    <header className="pt-20 pb-14 sm:pt-28 sm:pb-20">
+      <h1 className="display text-4xl sm:text-5xl">Orr Knaan</h1>
+      <p className="mt-5 max-w-md text-lg text-dim">
         I make things across film, music, code and drawing.
       </p>
       {/* Negative margin pulls the first icon's padding back so the row lines

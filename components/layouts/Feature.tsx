@@ -5,7 +5,7 @@ import type { LayoutProps } from '@/lib/types'
 /** One item per row, full width, large player or cover. For films. */
 export default function Feature({ items, collection }: LayoutProps) {
   return (
-    <div className="space-y-16 sm:space-y-24">
+    <div className="space-y-14 sm:space-y-20">
       {items.map((item) => {
         const lead = collection.mediaMode === 'none' ? null : leadMedia(item.media)
         return (
@@ -17,7 +17,7 @@ export default function Feature({ items, collection }: LayoutProps) {
               </div>
             )}
             <div className={lead ? 'mt-5' : ''}>
-              <h3 className="text-xl sm:text-2xl">
+              <h3 className="text-2xl sm:text-3xl">
                 <ItemTitle item={item} />
               </h3>
               <div className="mt-1 flex flex-wrap items-baseline gap-x-3 text-sm">

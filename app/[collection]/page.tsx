@@ -42,11 +42,11 @@ export default async function CollectionPage({ params }: Props) {
     <div className="mx-auto max-w-4xl px-6 sm:px-8">
       <NavBar collections={collections} mode="page" activeSlug={collection.slug} />
       <header className="border-b border-rule pt-20 pb-14 sm:pt-24 sm:pb-20">
-        <h1 className="text-3xl tracking-tight sm:text-4xl">{collection.title}</h1>
+        <h1 className="display text-3xl sm:text-4xl">{collection.title}</h1>
         {collection.blurb && <p className="mt-3 text-lg text-dim">{collection.blurb}</p>}
       </header>
 
-      <main className="py-12 sm:py-16">
+      <main className="py-10 sm:py-14">
         {items.length === 0 || !Layout ? (
           <p className="text-dim">Nothing here yet.</p>
         ) : (
@@ -54,7 +54,7 @@ export default async function CollectionPage({ params }: Props) {
         )}
       </main>
 
-      <footer className="border-t border-rule py-10 text-sm text-dim">
+      <footer className="py-10 text-sm text-dim">
         {new Date().getFullYear()}
       </footer>
     </div>

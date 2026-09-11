@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
-/* Dark is the default; light arrives only via the OS setting. Both are
-   defined as plain custom properties so a single @theme block below turns
-   them into Tailwind utilities (bg-bg, text-fg, border-rule, text-accent). */
+/* ---------------------------------------------------------------- palette --
+   Dark is the default; light arrives only from the OS setting. Safe House is
+   black and white, so the scheme is near-monochrome with one warm accent
+   rather than a second colour competing with the film.                      */
+
 :root {
   --bg: #0b0b0c;
   --fg: #f4f1ea;
@@ -18,6 +20,8 @@
     --fg: #141416;
     --dim: #5f5b54;
     --rule: #ded8cb;
+    /* Darker than the dark-mode accent: the same ochre on a pale ground would
+       not hold its contrast. */
     --accent: #8f5d1c;
     color-scheme: light;
   }
@@ -31,12 +35,65 @@
   --color-dim: var(--dim);
   --color-rule: var(--rule);
   --color-accent: var(--accent);
+
+  --font-sans: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
+}
+
+/* ------------------------------------------------------------- type scale --
+   One ratio, roughly 1.25, so sizes relate to each other instead of being
+   picked one at a time. Tracking tightens as the size grows, which is what
+   keeps a large serif from looking loose.                                   */
+
+@theme {
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.55;
+  --text-base: 1rem;
+  --text-base--line-height: 1.65;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.6;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.35;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 1.25;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 1.15;
+  --text-4xl: 2.875rem;
+  --text-4xl--line-height: 1.05;
+  --text-5xl: 4rem;
+  --text-5xl--line-height: 1;
 }
 
 body {
   background: var(--bg);
   color: var(--fg);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Names and titles. The serif carries the identity; everything functional
+   stays in the grotesque. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* A section label: small, letterspaced, quiet. Used for collection headings
+   and the admin's own section titles. */
+.eyebrow {
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
 }
 
 /* Anchor jumps from the nav bar glide rather than snap. */
@@ -44,12 +101,37 @@ body {
   html { scroll-behavior: smooth; }
 }
 
-/* Typography for the HTML that `marked` produces from an item's body.
-   Written by hand rather than pulling in a typography plugin. */
-.prose { max-width: 65ch; line-height: 1.7; }
+/* Keyboard focus stays visible; the accent is the one colour the site owns. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Native audio controls cannot be restyled, but they can be calmed down: in
+   dark mode the browser's own light widget is inverted to sit on the page. */
+audio {
+  width: 100%;
+  max-width: 28rem;
+  height: 2.25rem;
+}
+@media (prefers-color-scheme: dark) {
+  audio { filter: invert(0.92) hue-rotate(180deg); }
+}
+
+/* --------------------------------------------------------------- markdown --
+   Typography for the HTML `marked` produces from an item's body. Written by
+   hand rather than pulling in a typography plugin.                          */
+
+.prose { max-width: 62ch; }
 .prose > * + * { margin-top: 1.15em; }
-.prose h2 { font-size: 1.3rem; margin-top: 2em; letter-spacing: -0.01em; }
-.prose h3 { font-size: 1.1rem; margin-top: 1.6em; }
+.prose p { line-height: 1.75; }
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  margin-top: 2em;
+  letter-spacing: -0.01em;
+}
+.prose h3 { font-size: var(--text-lg); margin-top: 1.6em; }
 .prose a { color: var(--accent); text-underline-offset: 4px; text-decoration: underline; }
 .prose ul, .prose ol { padding-left: 1.25rem; }
 .prose ul { list-style: disc; }
@@ -59,12 +141,17 @@ body {
   border-left: 2px solid var(--accent);
   padding-left: 1rem;
   color: var(--dim);
+  font-style: italic;
 }
 .prose code {
   font-size: 0.9em;
   background: color-mix(in oklab, var(--fg) 10%, transparent);
   padding: 0.1em 0.35em;
 }
-.prose pre { background: color-mix(in oklab, var(--fg) 8%, transparent); padding: 1rem; overflow-x: auto; }
+.prose pre {
+  background: color-mix(in oklab, var(--fg) 8%, transparent);
+  padding: 1rem;
+  overflow-x: auto;
+}
 .prose pre code { background: none; padding: 0; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
