@@ -46,10 +46,13 @@ const items = [
     body: SAFE_HOUSE_BODY, tags: [], year: 2026, date_label: 'August 2026',
     url: null, url_label: null, featured: true, sort_order: 1, status: 'published' },
 
-  { c: 'films', slug: 'kolnoa-iasa', title: 'Kolnoa IASA', subtitle: null,
-    blurb: 'A film group at my school. One or two serious films a year.',
+  // The subtitle does the disambiguating at a glance: in the feature layout
+  // this sits among actual films, so it needs to announce itself as a group.
+  { c: 'films', slug: 'kolnoa-iasa', title: 'Kolnoa IASA', subtitle: 'Film group',
+    blurb: 'The film group at my school, not a film in itself. It will make one or two serious films a year.',
     body: null, tags: [], year: null, date_label: null,
-    url: null, url_label: null, featured: false, sort_order: 2, status: 'published' },
+    url: 'https://www.youtube.com/@iasacinema', url_label: 'YouTube',
+    featured: false, sort_order: 2, status: 'published' },
 
   // music
   { c: 'music', slug: 'game-music-medley', title: 'Game music medley', subtitle: null,
@@ -178,6 +181,8 @@ const media = [
     url: 'https://xbqrbml01ydz30oy.public.blob.vercel-storage.com/music/game-music-medley.mp3' },
   // Only the public repos. iasa-schedule and board-game-shelf are private, so
   // they get no link until Orr opens them.
+  { item: 'kolnoa-iasa', kind: 'link', caption: 'Instagram', sort_order: 1,
+    url: 'https://www.instagram.com/iasacinema/' },
   { item: 'piano-log', kind: 'link', caption: 'GitHub', sort_order: 1,
     url: 'https://github.com/orr-lab/piano-log' },
   { item: 'cubing-site', kind: 'link', caption: 'GitHub', sort_order: 1,
