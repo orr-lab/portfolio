@@ -1,0 +1,48 @@
+// Hand-written marks, not an icon library — the brief rules out dependencies
+// and stock icon sets, and three glyphs do not justify either.
+//
+// All three share one construction: a rounded outline at stroke-width 1.9 on a
+// 24-unit grid, with at most one small filled detail. That consistency is what
+// lets them sit in a row next to a plain text link without looking accidental.
+//
+// GitHub is deliberately absent. Its octocat is too intricate to redraw
+// faithfully from memory, and an approximation would look worse than the word.
+
+const base = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.9,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+  'aria-hidden': true,
+  focusable: false,
+}
+
+export function YouTubeIcon({ size = 21 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="2" y="5" width="20" height="14" rx="4.2" />
+      <path d="M10.3 9.4 L15.5 12 L10.3 14.6 Z" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function InstagramIcon({ size = 21 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4.1" />
+      <circle cx="17.3" cy="6.7" r="1.15" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function MailIcon({ size = 21 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <rect x="2.5" y="5" width="19" height="14" rx="2.4" />
+      <path d="M3.4 7.2 L12 13.3 L20.6 7.2" />
+    </svg>
+  )
+}
