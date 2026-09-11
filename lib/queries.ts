@@ -119,3 +119,61 @@ export function hasRenderableContent(collection: Collection, items: Item[]): boo
   }
   return true
 }
+
+/**
+ * One item by slug, with its collection. Returns null for drafts and for items
+ * with no body — body IS NULL means there is no detail page to serve.
+ */
+export async function getItemBySlug(
+  slug: string,
+): Promise<{ item: Item; collection: Collection } | null> {
+  const rows = await sql`
+    select i.*, coalesce(m.media, '[]'::json) as media
+    from items i
+    left join lateral (
+      select json_agg(json_build_object(
+        'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption
+      ) order by x.sort_order) as media
+      from media x where x.item_id = i.id
+    ) m on true
+    where i.slug = ${slug} and i.status = 'published' and i.body is not null
+    limit 1`
+  if (!rows.length) return null
+
+  const item = toItem(rows[0])
+  const collections = await sql`select * from collections where id = ${item.collectionId}`
+  if (!collections.length) return null
+  return { item, collection: toCollection(collections[0]) }
+}
+
+/** Every item that has a detail page. Used to prerender /work/[slug]. */
+export async function listItemsWithBody(): Promise<{ slug: string }[]> {
+  const rows = await sql`
+    select slug from items where status = 'published' and body is not null`
+  return rows.map((r) => ({ slug: r.slug as string }))
+}
+
+/**
+ * Collections the navigation should offer: visible, and actually holding
+ * something to look at. This is the SQL statement of the same rule
+ * hasRenderableContent() applies in memory — a gallery whose published items
+ * carry no images is empty, because it would render a blank wall.
+ *
+ * Without this the bar offers a link to a section that was never rendered.
+ */
+export async function listNavCollections(): Promise<Collection[]> {
+  const rows = await sql`
+    select c.* from collections c
+    where c.visible
+      and exists (
+        select 1 from items i
+        where i.collection_id = c.id
+          and i.status = 'published'
+          and (
+            c.layout <> 'gallery'
+            or exists (select 1 from media m where m.item_id = i.id and m.kind = 'image')
+          )
+      )
+    order by c.sort_order, c.title`
+  return rows.map(toCollection)
+}

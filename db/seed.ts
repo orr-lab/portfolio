@@ -173,6 +173,9 @@ const media = [
     caption: null, sort_order: 0 },
   { item: 'game-music-medley', kind: 'embed', url: 'https://youtu.be/3GrGEhB4eQQ',
     caption: null, sort_order: 0 },
+  // sort_order -1 so the audio leads: if you can hear it, that is the point.
+  { item: 'game-music-medley', kind: 'audio', caption: null, sort_order: -1,
+    url: 'https://xbqrbml01ydz30oy.public.blob.vercel-storage.com/music/game-music-medley.mp3' },
   { item: 'game-music-medley', kind: 'file', caption: 'Score (PDF)', sort_order: 1,
     url: 'https://xbqrbml01ydz30oy.public.blob.vercel-storage.com/music/game-music-medley-score.pdf' },
 ]

@@ -29,7 +29,10 @@ export default function List({ items, collection }: LayoutProps) {
       {items.map((item) => {
         const audio = showMedia ? item.media.filter((m) => m.kind === 'audio') : []
         const files = showMedia ? item.media.filter((m) => m.kind === 'file') : []
-        // Shown outright on a short list; tap-to-load once there are many.
+        // When an item has its own audio, that is how you hear it, and a video
+        // player beside it is just a second copy of the same piece. The embed
+        // steps back to a link. Without audio it stays a player.
+        const audioWins = audio.length > 0
         const embeds = showMedia ? item.media.filter((m) => m.kind === 'embed') : []
 
         return (
@@ -50,12 +53,18 @@ export default function List({ items, collection }: LayoutProps) {
 
             {audio.map((m) => <AudioPlayer key={m.id} media={m} />)}
 
-            {embeds.map((m) => (
+            {!audioWins && embeds.map((m) => (
               <InlineEmbed key={m.id} url={m.url} label={m.caption ?? 'Listen'} eager={eager} />
             ))}
 
-            {files.length > 0 && (
+            {(files.length > 0 || (audioWins && embeds.length > 0)) && (
               <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                {audioWins && embeds.map((m) => (
+                  <a key={m.id} href={m.url} target="_blank" rel="noreferrer"
+                     className="text-sm text-dim underline underline-offset-4 hover:text-accent">
+                    {m.caption ?? 'Watch'} ↗
+                  </a>
+                ))}
                 {files.map((m) => <FileLink key={m.id} media={m} />)}
               </div>
             )}

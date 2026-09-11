@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Hero from '@/components/Hero'
+import NavBar from '@/components/NavBar'
 import Featured from '@/components/Featured'
 import { layoutFor } from '@/components/layouts'
 import {
@@ -31,7 +32,10 @@ export default async function Hub() {
 
   return (
     <div className="mx-auto max-w-4xl px-6 sm:px-8">
+      <NavBar collections={sections.map((s) => s.collection)} mode="hub" />
       <Hero />
+      {/* The bar appears once this scrolls out of view. */}
+      <div id="hero-sentinel" aria-hidden />
       {featured && <Featured item={featured} />}
 
       {sections.map(({ collection, shown, total, limit }) => {
@@ -60,6 +64,9 @@ export default async function Hub() {
           </section>
         )
       })}
+
+      {/* Marks where the sections stop, so the bar can light the last one. */}
+      <div id="sections-end" aria-hidden />
 
       <footer className="border-t border-rule py-10 text-sm text-dim">
         {new Date().getFullYear()}

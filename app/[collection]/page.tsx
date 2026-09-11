@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import NavBar from '@/components/NavBar'
 import { layoutFor } from '@/components/layouts'
-import { getCollection, listCollections, listPublishedItems, sortItems } from '@/lib/queries'
+import {
+  getCollection, listCollections, listNavCollections, listPublishedItems, sortItems,
+} from '@/lib/queries'
 
 // The folder name [collection] makes this one page serve /films, /music and
 // every collection added later. `params` carries the matched segment.
@@ -10,7 +13,7 @@ type Props = { params: Promise<{ collection: string }> }
 // Prerenders one page per visible collection at build time instead of on the
 // first request. A collection added later still works; it just renders on demand.
 export async function generateStaticParams() {
-  const collections = await listCollections()
+  const collections = await listNavCollections()
   return collections.map((c) => ({ collection: c.slug }))
 }
 
@@ -33,10 +36,12 @@ export default async function CollectionPage({ params }: Props) {
 
   const items = sortItems(await listPublishedItems(collection.id), collection.sortMode)
   const Layout = layoutFor(collection.layout)
+  const collections = await listNavCollections()
 
   return (
     <div className="mx-auto max-w-4xl px-6 sm:px-8">
-      <header className="border-b border-rule py-14 sm:py-20">
+      <NavBar collections={collections} mode="page" activeSlug={collection.slug} />
+      <header className="border-b border-rule pt-20 pb-14 sm:pt-24 sm:pb-20">
         <h1 className="text-3xl tracking-tight sm:text-4xl">{collection.title}</h1>
         {collection.blurb && <p className="mt-3 text-lg text-dim">{collection.blurb}</p>}
       </header>

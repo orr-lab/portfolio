@@ -75,6 +75,24 @@ flag by construction. Combinations that must not break:
 Plain `<audio>` with a minimal custom skin. **No persistent cross-page player.**
 Music stops on navigation; that is accepted and deliberate.
 
+## Icons
+
+`app/favicon.ico` and `app/apple-icon.png` — an amber "OK" monogram on near-black.
+Next serves them at `/favicon.ico` and `/apple-icon.png` and emits the link tags.
+
+**Deliberately no SVG icon.** Firefox is unreliable with SVG favicons, especially
+ones carrying a `prefers-color-scheme` media query, and it always probes the bare
+`/favicon.ico`. An ICO plus a PNG is the combination nothing argues with.
+
+The ICO holds **32x32 and 48x48 only**. 16x16 was cut: two bold letters in
+sixteen pixels closes the O's counter and muddies the K. Browsers that want 16
+downscale the 32 with better filtering than hand-rasterised tiny text.
+
+Don't change the icon casually — people find a tab by its icon. If you do
+regenerate it, render at 4x and downsample, and fit the mark to its *ink* box
+(`actualBoundingBoxLeft/Right`), not its advance width: K's diagonal overhangs
+the advance width and pushes the mark off-canvas at small sizes.
+
 ## Commands
 
 ```bash
