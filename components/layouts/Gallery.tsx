@@ -13,7 +13,10 @@ export default function Gallery({ items, collection }: LayoutProps) {
   const shots: Shot[] = items.flatMap((item) =>
     item.media
       .filter((m) => m.kind === 'image')
-      .map((m) => ({ id: m.id, url: m.url, caption: m.caption, href: detailHref(item) })),
+      .map((m) => ({
+        id: m.id, url: m.url, caption: m.caption,
+        width: m.width, height: m.height, href: detailHref(item),
+      })),
   )
 
   if (shots.length === 0) return null

@@ -1,5 +1,5 @@
 import { DateText, ItemTitle } from '@/components/Bits'
-import { excerpt } from '@/lib/markdown'
+import { excerpt } from '@/lib/excerpt'
 import type { LayoutProps } from '@/lib/types'
 
 /**

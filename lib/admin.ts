@@ -8,7 +8,8 @@ export type AdminItem = Item & { collectionSlug: string; collectionTitle: string
 const MEDIA_JSON = `
   left join lateral (
     select json_agg(json_build_object(
-      'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption
+      'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
+        'width', x.width, 'height', x.height
     ) order by x.sort_order) as media
     from media x where x.item_id = i.id
   ) m on true`
@@ -22,6 +23,7 @@ function toAdminItem(r: any): AdminItem {
     featured: r.featured, status: r.status, sortOrder: r.sort_order,
     media: (r.media ?? []).map((x: any) => ({
       id: x.id, kind: x.kind, url: x.url, caption: x.caption,
+      width: x.width, height: x.height,
     })),
     collectionSlug: r.collection_slug, collectionTitle: r.collection_title,
   }

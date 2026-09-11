@@ -40,7 +40,8 @@ export default async function WorkPage({ params }: Props) {
   const files = item.media.filter((m) => m.kind === 'file')
 
   const shots: Shot[] = images.map((m) => ({
-    id: m.id, url: m.url, caption: m.caption, href: null,
+    id: m.id, url: m.url, caption: m.caption,
+    width: m.width, height: m.height, href: null,
   }))
 
   return (

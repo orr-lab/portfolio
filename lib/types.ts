@@ -14,6 +14,9 @@ export type Media = {
   kind: MediaKind
   url: string
   caption: string | null
+  /** True pixel size, when known. Null for embeds, links and older rows. */
+  width: number | null
+  height: number | null
 }
 
 export type Item = {

@@ -163,3 +163,192 @@ export async function moveItem(fd: FormData) {
   )
   revalidateSite()
 }
+
+/* ---------- media ---------------------------------------------------------- */
+
+/** image/video/audio by content type, anything else a downloadable file. */
+function kindForType(contentType: string): 'image' | 'video' | 'audio' | 'file' {
+  if (contentType.startsWith('image/')) return 'image'
+  if (contentType.startsWith('video/')) return 'video'
+  if (contentType.startsWith('audio/')) return 'audio'
+  return 'file'
+}
+
+/**
+ * Records an uploaded file. `atTop` gives it the lowest sort_order, which is
+ * what an ongoing gallery wants: the newest drawing appears first and, because
+ * the cover is defined as the first media row, becomes the cover for free.
+ */
+export async function addUploadedMedia(
+  itemId: string, url: string, contentType: string, atTop: boolean,
+  width?: number | null, height?: number | null,
+) {
+  await requireAuth()
+  const kind = kindForType(contentType)
+  const position = atTop
+    ? `coalesce((select min(sort_order) - 1 from media where item_id = $1), 0)`
+    : `coalesce((select max(sort_order) + 1 from media where item_id = $1), 0)`
+  await sql.query(
+    `insert into media (item_id, kind, url, width, height, sort_order)
+     values ($1, $2, $3, $4, $5, ${position})`,
+    [itemId, kind, url, width ?? null, height ?? null],
+  )
+  revalidateSite()
+}
+
+/** A pasted URL: a player if it is a YouTube/Vimeo link, otherwise a link. */
+export async function addPastedUrl(fd: FormData): Promise<void> {
+  await requireAuth()
+  const itemId = str(fd, 'itemId')
+  const url = str(fd, 'url')
+  const caption = orNull(fd, 'caption')
+  if (!url) return
+
+  const { isEmbeddable } = await import('@/lib/embed')
+  const kind = isEmbeddable(url) ? 'embed' : 'link'
+  await sql.query(
+    `insert into media (item_id, kind, url, caption, sort_order)
+     values ($1, $2, $3, $4,
+             coalesce((select max(sort_order) + 1 from media where item_id = $1), 0))`,
+    [itemId, kind, url, caption],
+  )
+  revalidateSite()
+}
+
+export async function setMediaCaption(fd: FormData) {
+  await requireAuth()
+  await sql.query(`update media set caption = $2 where id = $1`,
+    [str(fd, 'id'), orNull(fd, 'caption')])
+  revalidateSite()
+}
+
+export async function deleteMedia(fd: FormData) {
+  await requireAuth()
+  const id = str(fd, 'id')
+  const rows = (await sql.query(`select url from media where id = $1`, [id])) as { url: string }[]
+  await sql.query(`delete from media where id = $1`, [id])
+
+  // Drop the stored file too, or deleting a row would quietly leave the bytes
+  // behind for ever. Only our own store, and never fatal.
+  const url = rows[0]?.url
+  if (url?.includes('.public.blob.vercel-storage.com')) {
+    try {
+      const { del } = await import('@vercel/blob')
+      await del(url)
+    } catch {
+      // The row is already gone; a stranded blob is not worth failing over.
+    }
+  }
+  revalidateSite()
+}
+
+export async function moveMedia(fd: FormData) {
+  await requireAuth()
+  const id = str(fd, 'id')
+  const dir = str(fd, 'dir') === 'up' ? -1 : 1
+
+  const rows = (await sql.query(
+    `select id from media
+     where item_id = (select item_id from media where id = $1)
+     order by sort_order, id`,
+    [id],
+  )) as { id: string }[]
+
+  const order = rows.map((r) => r.id)
+  const at = order.indexOf(id)
+  const to = at + dir
+  if (at < 0 || to < 0 || to >= order.length) return
+  ;[order[at], order[to]] = [order[to], order[at]]
+
+  await sql.query(
+    `update media as m set sort_order = u.ord
+     from (select * from unnest($1::uuid[], $2::int[]) as t(id, ord)) u
+     where m.id = u.id`,
+    [order, order.map((_, i) => i + 1)],
+  )
+  revalidateSite()
+}
+
+/* ---------- collections ---------------------------------------------------- */
+
+export async function saveCollection(_prev: SaveState, fd: FormData): Promise<SaveState> {
+  await requireAuth()
+
+  const id = str(fd, 'id')
+  const isNew = id === '' || id === 'new'
+  const title = str(fd, 'title')
+  if (!title) return { error: 'A title is required.' }
+
+  const slug = str(fd, 'slug') || slugify(title)
+  // slugProblem rejects the reserved names too: /[collection] sits at the site
+  // root, so a collection slugged "admin" would be unreachable for ever.
+  const problem = slugProblem(slug, 'collection')
+  if (problem) return { error: problem }
+
+  const { collectionSlugTaken } = await import('@/lib/admin')
+  if (await collectionSlugTaken(slug, isNew ? undefined : id)) {
+    return { error: `The slug "${slug}" is already used by another collection.` }
+  }
+
+  const columns = Number(str(fd, 'columns')) || 1
+  const values = [
+    slug, title, orNull(fd, 'blurb'), str(fd, 'layout'), columns,
+    fd.get('showYear') === 'on', fd.get('showTags') === 'on', fd.get('showBlurb') === 'on',
+    str(fd, 'mediaMode'), str(fd, 'sortMode'), str(fd, 'density'),
+    orNull(fd, 'itemNounPlural'), fd.get('visible') === 'on',
+  ]
+
+  let collectionId = id
+  if (isNew) {
+    const rows = await sql.query(
+      `insert into collections
+         (slug, title, blurb, layout, columns, show_year, show_tags, show_blurb,
+          media_mode, sort_mode, density, item_noun_plural, visible, sort_order)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,
+               coalesce((select max(sort_order) + 1 from collections), 1))
+       returning id`,
+      values,
+    )
+    collectionId = (rows as { id: string }[])[0].id
+  } else {
+    await sql.query(
+      `update collections set slug=$1, title=$2, blurb=$3, layout=$4, columns=$5,
+         show_year=$6, show_tags=$7, show_blurb=$8, media_mode=$9, sort_mode=$10,
+         density=$11, item_noun_plural=$12, visible=$13
+       where id=$14`,
+      [...values, id],
+    )
+  }
+
+  revalidateSite()
+  redirect(`/admin/collections/${collectionId}?saved=1`)
+}
+
+export async function moveCollection(fd: FormData) {
+  await requireAuth()
+  const id = str(fd, 'id')
+  const dir = str(fd, 'dir') === 'up' ? -1 : 1
+
+  const rows = (await sql.query(
+    `select id from collections order by sort_order, title`,
+  )) as { id: string }[]
+  const order = rows.map((r) => r.id)
+  const at = order.indexOf(id)
+  const to = at + dir
+  if (at < 0 || to < 0 || to >= order.length) return
+  ;[order[at], order[to]] = [order[to], order[at]]
+
+  await sql.query(
+    `update collections as c set sort_order = u.ord
+     from (select * from unnest($1::uuid[], $2::int[]) as t(id, ord)) u
+     where c.id = u.id`,
+    [order, order.map((_, i) => i + 1)],
+  )
+  revalidateSite()
+}
+
+export async function toggleCollectionVisible(fd: FormData) {
+  await requireAuth()
+  await sql.query(`update collections set visible = not visible where id = $1`, [str(fd, 'id')])
+  revalidateSite()
+}

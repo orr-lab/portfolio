@@ -6,7 +6,14 @@ import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export type Shot = { id: string; url: string; caption: string | null; href: string | null }
+export type Shot = {
+  id: string
+  url: string
+  caption: string | null
+  href: string | null
+  width: number | null
+  height: number | null
+}
 
 export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1 | 2 | 3 }) {
   // useState holds a value that survives re-renders. `open` is the index of the
@@ -37,35 +44,52 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
     }
   }, [open, close, step])
 
-  const cols = columns === 1 ? 'grid-cols-1'
-    : columns === 2 ? 'grid-cols-2'
-    : 'grid-cols-2 sm:grid-cols-3'
+  // CSS columns rather than a grid: a masonry flow lets each drawing keep its
+  // own proportions. A grid would force one shape on all of them, and a square
+  // crop of a tall pencil study keeps the trunk and throws away the tree.
+  const cols = columns === 1 ? 'columns-1'
+    : columns === 2 ? 'columns-2'
+    : 'columns-2 sm:columns-3'
 
   const current = open === null ? null : shots[open]
 
   return (
     <>
-      <ul className={`grid ${cols} gap-2 sm:gap-3`}>
+      <div className={`${cols} gap-2 sm:gap-3`}>
         {shots.map((shot, i) => (
-          <li key={shot.id}>
-            <button
-              type="button"
-              onClick={() => setOpen(i)}
-              className="relative block w-full cursor-zoom-in overflow-hidden"
-              style={{ aspectRatio: '1 / 1' }}
-              aria-label={shot.caption ?? 'Open image'}
-            >
+          <button
+            key={shot.id}
+            type="button"
+            onClick={() => setOpen(i)}
+            className="mb-2 block w-full cursor-zoom-in break-inside-avoid overflow-hidden sm:mb-3"
+            aria-label={shot.caption ?? 'Open image'}
+          >
+            {shot.width && shot.height ? (
+              // Real dimensions: Next reserves the right space, so nothing
+              // jumps as the images arrive, and the tile keeps its true shape.
               <Image
                 src={shot.url}
                 alt={shot.caption ?? ''}
-                fill
+                width={shot.width}
+                height={shot.height}
                 sizes="(max-width: 640px) 50vw, 33vw"
-                className="object-cover transition-opacity hover:opacity-85"
+                className="h-auto w-full transition-opacity hover:opacity-85"
               />
-            </button>
-          </li>
+            ) : (
+              // No stored size (an older row): fall back to a square.
+              <span className="relative block w-full" style={{ aspectRatio: '1 / 1' }}>
+                <Image
+                  src={shot.url}
+                  alt={shot.caption ?? ''}
+                  fill
+                  sizes="(max-width: 640px) 50vw, 33vw"
+                  className="object-cover transition-opacity hover:opacity-85"
+                />
+              </span>
+            )}
+          </button>
         ))}
-      </ul>
+      </div>
 
       {current && (
         <div

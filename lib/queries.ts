@@ -29,6 +29,7 @@ function toItem(r: any): Item {
     sortOrder: r.sort_order,
     media: (r.media ?? []).map((m: any) => ({
       id: m.id, kind: m.kind, url: m.url, caption: m.caption,
+      width: m.width, height: m.height,
     })),
   }
 }
@@ -57,7 +58,8 @@ export async function listPublishedItems(collectionId?: string): Promise<Item[]>
         from items i
         left join lateral (
           select json_agg(json_build_object(
-            'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption
+            'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
+        'width', x.width, 'height', x.height
           ) order by x.sort_order) as media
           from media x where x.item_id = i.id
         ) m on true
@@ -68,7 +70,8 @@ export async function listPublishedItems(collectionId?: string): Promise<Item[]>
         from items i
         left join lateral (
           select json_agg(json_build_object(
-            'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption
+            'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
+        'width', x.width, 'height', x.height
           ) order by x.sort_order) as media
           from media x where x.item_id = i.id
         ) m on true
@@ -83,7 +86,8 @@ export async function getFeaturedItem(): Promise<Item | null> {
     from items i
     left join lateral (
       select json_agg(json_build_object(
-        'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption
+        'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
+        'width', x.width, 'height', x.height
       ) order by x.sort_order) as media
       from media x where x.item_id = i.id
     ) m on true
@@ -134,7 +138,8 @@ export async function getItemBySlug(
     from items i
     left join lateral (
       select json_agg(json_build_object(
-        'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption
+        'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
+        'width', x.width, 'height', x.height
       ) order by x.sort_order) as media
       from media x where x.item_id = i.id
     ) m on true
