@@ -29,7 +29,7 @@ function toItem(r: any): Item {
     sortOrder: r.sort_order,
     media: (r.media ?? []).map((m: any) => ({
       id: m.id, kind: m.kind, url: m.url, caption: m.caption,
-      width: m.width, height: m.height,
+      width: m.width, height: m.height, takenOn: m.takenOn ?? null,
     })),
   }
 }
@@ -59,7 +59,8 @@ export async function listPublishedItems(collectionId?: string): Promise<Item[]>
         left join lateral (
           select json_agg(json_build_object(
             'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
-        'width', x.width, 'height', x.height
+        'width', x.width, 'height', x.height,
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
           ) order by x.sort_order) as media
           from media x where x.item_id = i.id
         ) m on true
@@ -71,7 +72,8 @@ export async function listPublishedItems(collectionId?: string): Promise<Item[]>
         left join lateral (
           select json_agg(json_build_object(
             'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
-        'width', x.width, 'height', x.height
+        'width', x.width, 'height', x.height,
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
           ) order by x.sort_order) as media
           from media x where x.item_id = i.id
         ) m on true
@@ -87,7 +89,8 @@ export async function getFeaturedItem(): Promise<Item | null> {
     left join lateral (
       select json_agg(json_build_object(
         'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
-        'width', x.width, 'height', x.height
+        'width', x.width, 'height', x.height,
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
       ) order by x.sort_order) as media
       from media x where x.item_id = i.id
     ) m on true
@@ -139,7 +142,8 @@ export async function getItemBySlug(
     left join lateral (
       select json_agg(json_build_object(
         'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
-        'width', x.width, 'height', x.height
+        'width', x.width, 'height', x.height,
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
       ) order by x.sort_order) as media
       from media x where x.item_id = i.id
     ) m on true

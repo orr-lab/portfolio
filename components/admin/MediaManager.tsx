@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { upload } from '@vercel/blob/client'
 import {
-  addUploadedMedia, deleteMedia, moveMedia, setMediaCaption,
+  addUploadedMedia, deleteMedia, moveMedia, setMediaCaption, setMediaDate,
 } from '@/app/admin/actions'
 import type { Media } from '@/lib/types'
 import { inputClass } from './Field'
@@ -60,9 +60,14 @@ export default function MediaManager({
             setJobs((js) => js.map((j, n) => (n === i ? { ...j, percent: percentage } : j)))
           },
         })
+        // The file's own timestamp is usually the day the photo was taken, so
+        // it becomes the default date rather than asking for it twenty times.
+        const takenOn = file.lastModified
+          ? new Date(file.lastModified).toISOString().slice(0, 10)
+          : null
         await addUploadedMedia(
           itemId, result.url, file.type || 'application/octet-stream', atTop,
-          size?.width, size?.height,
+          size?.width, size?.height, takenOn,
         )
         setJobs((js) => js.map((j, n) => (n === i ? { ...j, percent: 100 } : j)))
       } catch (err) {
@@ -165,8 +170,8 @@ export default function MediaManager({
                   </form>
                 </span>
               </div>
-              {/* Captions save on their own, so editing one never risks the
-                  rest of the form. */}
+              {/* Caption and date save on their own, so editing one never
+                  risks the rest of the form. */}
               <form action={setMediaCaption} className="mt-2 flex gap-2">
                 <input type="hidden" name="id" value={m.id} />
                 <input
@@ -179,6 +184,21 @@ export default function MediaManager({
                   Save
                 </button>
               </form>
+              {m.kind === 'image' && (
+                <form action={setMediaDate} className="mt-2 flex gap-2">
+                  <input type="hidden" name="id" value={m.id} />
+                  <input
+                    type="date"
+                    name="takenOn"
+                    defaultValue={m.takenOn ?? ''}
+                    aria-label="Date this was made"
+                    className={`${inputClass} py-2 text-sm`}
+                  />
+                  <button className="min-h-11 shrink-0 px-3 text-sm text-dim hover:text-accent">
+                    Save
+                  </button>
+                </form>
+              )}
             </li>
           ))}
         </ul>

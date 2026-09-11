@@ -17,6 +17,8 @@ export type Media = {
   /** True pixel size, when known. Null for embeds, links and older rows. */
   width: number | null
   height: number | null
+  /** ISO date the image was made, when known. Drives the numbering below. */
+  takenOn: string | null
 }
 
 export type Item = {

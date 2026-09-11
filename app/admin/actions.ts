@@ -181,7 +181,7 @@ function kindForType(contentType: string): 'image' | 'video' | 'audio' | 'file' 
  */
 export async function addUploadedMedia(
   itemId: string, url: string, contentType: string, atTop: boolean,
-  width?: number | null, height?: number | null,
+  width?: number | null, height?: number | null, takenOn?: string | null,
 ) {
   await requireAuth()
   const kind = kindForType(contentType)
@@ -189,10 +189,19 @@ export async function addUploadedMedia(
     ? `coalesce((select min(sort_order) - 1 from media where item_id = $1), 0)`
     : `coalesce((select max(sort_order) + 1 from media where item_id = $1), 0)`
   await sql.query(
-    `insert into media (item_id, kind, url, width, height, sort_order)
-     values ($1, $2, $3, $4, $5, ${position})`,
-    [itemId, kind, url, width ?? null, height ?? null],
+    `insert into media (item_id, kind, url, width, height, taken_on, sort_order)
+     values ($1, $2, $3, $4, $5, $6, ${position})`,
+    [itemId, kind, url, width ?? null, height ?? null, takenOn ?? null],
   )
+  revalidateSite()
+}
+
+/** The date shown under a drawing. Editable, because a file's timestamp is a
+    good guess and not a fact — a rescanned sketch carries the scan's date. */
+export async function setMediaDate(fd: FormData) {
+  await requireAuth()
+  await sql.query(`update media set taken_on = $2 where id = $1`,
+    [str(fd, 'id'), orNull(fd, 'takenOn')])
   revalidateSite()
 }
 

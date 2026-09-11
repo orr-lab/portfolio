@@ -39,8 +39,10 @@ export default async function WorkPage({ params }: Props) {
   const audio = item.media.filter((m) => m.kind === 'audio')
   const files = item.media.filter((m) => m.kind === 'file')
 
+  const { captionFor, numberByDate } = await import('@/lib/sequence')
+  const numbers = numberByDate(images)
   const shots: Shot[] = images.map((m) => ({
-    id: m.id, url: m.url, caption: m.caption,
+    id: m.id, url: m.url, caption: captionFor(m, numbers),
     width: m.width, height: m.height, href: null,
   }))
 

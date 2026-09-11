@@ -87,6 +87,13 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
                 />
               </span>
             )}
+            {/* Not a title and not a card — a drawing's number and date. Kept
+                small and quiet so the wall of images still reads as a wall. */}
+            {shot.caption && (
+              <span className="mt-1 block text-left text-xs text-dim tabular-nums">
+                {shot.caption}
+              </span>
+            )}
           </button>
         ))}
       </div>

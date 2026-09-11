@@ -1,6 +1,7 @@
 import Lightbox, { type Shot } from '@/components/Lightbox'
 import type { LayoutProps } from '@/lib/types'
 import { detailHref } from '@/lib/types'
+import { captionFor, numberByDate } from '@/lib/sequence'
 
 /**
  * An image grid with no titles and no cards. Every image from every item is
@@ -10,14 +11,21 @@ import { detailHref } from '@/lib/types'
 export default function Gallery({ items, collection }: LayoutProps) {
   if (collection.mediaMode === 'none') return null
 
-  const shots: Shot[] = items.flatMap((item) =>
-    item.media
-      .filter((m) => m.kind === 'image')
-      .map((m) => ({
-        id: m.id, url: m.url, caption: m.caption,
-        width: m.width, height: m.height, href: detailHref(item),
-      })),
+  const images = items.flatMap((item) =>
+    item.media.filter((m) => m.kind === 'image').map((m) => ({ item, media: m })),
   )
+  // Numbered across the whole wall, not per item, so one "Daily drawings" item
+  // holding a hundred images numbers them 1 to 100.
+  const numbers = numberByDate(images.map((x) => x.media))
+
+  const shots: Shot[] = images.map(({ item, media: m }) => ({
+    id: m.id,
+    url: m.url,
+    caption: captionFor(m, numbers),
+    width: m.width,
+    height: m.height,
+    href: detailHref(item),
+  }))
 
   if (shots.length === 0) return null
   return <Lightbox shots={shots} columns={collection.columns} />
