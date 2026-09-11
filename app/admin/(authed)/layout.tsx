@@ -16,7 +16,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-28">
+    <div className="mx-auto max-w-2xl px-4 pb-32">
       <header className="sticky top-0 z-20 flex items-center gap-5 border-b border-rule bg-bg/95 py-3 backdrop-blur">
         <Link href="/admin" className="text-base">Items</Link>
         <Link href="/admin/collections" className="text-base text-dim">Collections</Link>

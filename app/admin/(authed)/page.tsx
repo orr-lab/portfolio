@@ -39,11 +39,12 @@ export default async function AdminItems({
                 {c.title}
                 {!c.visible && <span className="ml-2 normal-case tracking-normal">(hidden)</span>}
               </h2>
+              {/* Adds straight into this collection, pre-selected. */}
               <Link
                 href={`/admin/items/new?collection=${c.id}`}
-                className="text-sm text-accent"
+                className="flex min-h-9 shrink-0 items-center border border-rule px-3 text-sm text-accent"
               >
-                + New
+                + Add
               </Link>
             </div>
 
@@ -121,6 +122,26 @@ export default async function AdminItems({
       {q && items.length === 0 && (
         <p className="mt-8 text-dim">Nothing matches “{q}”.</p>
       )}
+
+      {/* The primary action, pinned to the bottom of the screen rather than
+          hidden beside a heading: on a phone this is where the thumb already
+          is, and it is reachable from anywhere in a long list. */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-rule bg-bg/95 backdrop-blur">
+        <div className="mx-auto flex max-w-2xl gap-3 px-4 py-3">
+          <Link
+            href="/admin/items/new"
+            className="flex min-h-12 flex-1 items-center justify-center border border-accent text-base text-accent"
+          >
+            + New item
+          </Link>
+          <Link
+            href="/admin/collections/new"
+            className="flex min-h-12 items-center justify-center border border-rule px-4 text-base text-dim"
+          >
+            + Collection
+          </Link>
+        </div>
+      </div>
     </main>
   )
 }

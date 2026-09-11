@@ -10,7 +10,10 @@ export default async function AdminCollections() {
     <main className="py-4">
       <div className="flex items-baseline justify-between gap-3">
         <h1 className="text-xl">Collections</h1>
-        <Link href="/admin/collections/new" className="text-sm text-accent">+ New</Link>
+        <Link href="/admin/collections/new"
+              className="flex min-h-9 shrink-0 items-center border border-rule px-3 text-sm text-accent">
+          + Add
+        </Link>
       </div>
       <p className="mt-1 text-xs text-dim opacity-70">
         A new kind of work is a row here. It never needs new code.
@@ -58,6 +61,23 @@ export default async function AdminCollections() {
           )
         })}
       </ul>
+
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-rule bg-bg/95 backdrop-blur">
+        <div className="mx-auto flex max-w-2xl gap-3 px-4 py-3">
+          <Link
+            href="/admin/collections/new"
+            className="flex min-h-12 flex-1 items-center justify-center border border-accent text-base text-accent"
+          >
+            + New collection
+          </Link>
+          <Link
+            href="/admin"
+            className="flex min-h-12 items-center justify-center border border-rule px-4 text-base text-dim"
+          >
+            Items
+          </Link>
+        </div>
+      </div>
     </main>
   )
 }
