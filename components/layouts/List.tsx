@@ -3,10 +3,24 @@ import InlineEmbed from '@/components/InlineEmbed'
 import { Blurb, DateText, ItemTitle, Subtitle } from '@/components/Bits'
 import type { LayoutProps } from '@/lib/types'
 
+/**
+ * Above this many players on one page, embeds collapse to click-to-play.
+ * Below it they are simply shown, because a handful of iframes costs little
+ * and a tap-to-reveal on a three-item list is friction for nothing.
+ */
+const EAGER_EMBED_LIMIT = 8
+
 /** Compact rows. For compositions. Must stay comfortable at forty items. */
 export default function List({ items, collection }: LayoutProps) {
   const pad = collection.density === 'compact' ? 'py-3' : 'py-5'
   const showMedia = collection.mediaMode !== 'none'
+
+  // Counted across the whole list, not per row: ten items holding one embed
+  // each is the same weight on the page as one item holding ten.
+  const totalEmbeds = showMedia
+    ? items.reduce((n, i) => n + i.media.filter((m) => m.kind === 'embed').length, 0)
+    : 0
+  const eager = totalEmbeds <= EAGER_EMBED_LIMIT
 
   return (
     // No border-t: whatever sits above (a page header or a section heading)
@@ -15,8 +29,7 @@ export default function List({ items, collection }: LayoutProps) {
       {items.map((item) => {
         const audio = showMedia ? item.media.filter((m) => m.kind === 'audio') : []
         const files = showMedia ? item.media.filter((m) => m.kind === 'file') : []
-        // Tapping one of these loads its player in place; until then a list of
-        // forty compositions is still just text.
+        // Shown outright on a short list; tap-to-load once there are many.
         const embeds = showMedia ? item.media.filter((m) => m.kind === 'embed') : []
 
         return (
@@ -38,7 +51,7 @@ export default function List({ items, collection }: LayoutProps) {
             {audio.map((m) => <AudioPlayer key={m.id} media={m} />)}
 
             {embeds.map((m) => (
-              <InlineEmbed key={m.id} url={m.url} label={m.caption ?? 'Listen'} />
+              <InlineEmbed key={m.id} url={m.url} label={m.caption ?? 'Listen'} eager={eager} />
             ))}
 
             {files.length > 0 && (

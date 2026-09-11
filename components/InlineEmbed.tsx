@@ -4,17 +4,38 @@ import { useState } from 'react'
 import { toEmbed } from '@/lib/embed'
 
 /**
- * A YouTube/Vimeo row that costs nothing until it is tapped. Forty of these in
- * a list load forty buttons, not forty iframes; the player only exists after a
- * click. Playback stops on navigation, which is the trade the brief accepted.
+ * A YouTube/Vimeo row in a list.
  *
- * The player stays visible on purpose — hiding it to get audio-only playback
- * would breach YouTube's terms.
+ * `eager` shows the player straight away, which is what a short list wants —
+ * making someone tap to reveal a player when there is only one composition on
+ * screen is pointless ceremony. A long list flips to click-to-play so that
+ * forty compositions load forty buttons instead of forty iframes. List.tsx
+ * decides which, by counting.
+ *
+ * Playback stops on navigation, which is the trade the brief accepted.
  */
-export default function InlineEmbed({ url, label }: { url: string; label: string | null }) {
+export default function InlineEmbed(
+  { url, label, eager = false }: { url: string; label: string | null; eager?: boolean },
+) {
   const [playing, setPlaying] = useState(false)
   const embed = toEmbed(url)
   if (!embed) return null
+
+  if (eager) {
+    return (
+      <div className="mt-3 w-full max-w-md overflow-hidden bg-black" style={{ aspectRatio: '16 / 9' }}>
+        <iframe
+          // No autoplay: the page loading is not a request to start making noise.
+          src={`${embed.src}?rel=0`}
+          title={label ?? embed.title}
+          allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+          className="h-full w-full border-0"
+        />
+      </div>
+    )
+  }
 
   if (!playing) {
     return (
