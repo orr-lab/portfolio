@@ -25,11 +25,10 @@ const collections = [
     media_mode: 'cover', sort_mode: 'manual', density: 'comfortable',
     item_noun_plural: 'drawings', sort_order: 4, visible: true },
 
-  // Hidden until phase c ships the `index` layout. One column, no code.
   { slug: 'education', title: 'Education', blurb: null,
     layout: 'index', columns: 1, show_year: true, show_tags: false, show_blurb: false,
     media_mode: 'none', sort_mode: 'year_desc', density: 'compact',
-    item_noun_plural: null, sort_order: 5, visible: false },
+    item_noun_plural: null, sort_order: 5, visible: true },
 ]
 
 const SAFE_HOUSE_BODY = `A nine-minute black-and-white short set during the battle for Jerusalem in
