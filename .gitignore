@@ -1,0 +1,22 @@
+node_modules/
+.next/
+out/
+build/
+
+# Neon + Blob credentials, pulled with `vercel env pull`
+.env
+.env*.local
+
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+.DS_Store
+*.log
+.vercel
+.env*
+
+# Auto-installed by `vercel integration add neon`; machine-local tooling
+.agents/
+.claude/skills/
+skills-lock.json

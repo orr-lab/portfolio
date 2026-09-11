@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* Dark is the default; light arrives only via the OS setting. Both are
+   defined as plain custom properties so a single @theme block below turns
+   them into Tailwind utilities (bg-bg, text-fg, border-rule, text-accent). */
+:root {
+  --bg: #0b0b0c;
+  --fg: #f4f1ea;
+  --dim: #8a857c;
+  --rule: #1f1f22;
+  --accent: #c68a3e;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f2eb;
+    --fg: #141416;
+    --dim: #5f5b54;
+    --rule: #ded8cb;
+    --accent: #8f5d1c;
+    color-scheme: light;
+  }
+}
+
+/* `inline` makes the generated utilities point at the variable rather than
+   copying its value, so they follow the theme switch above. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-dim: var(--dim);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
