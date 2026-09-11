@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------- palette --
-   Dark is the default; light arrives only from the OS setting. Safe House is
-   black and white, so the scheme is near-monochrome with one warm accent
-   rather than a second colour competing with the film.                      */
+   Dark is the default. Light arrives either from the operating system or from
+   the footer switch, and the two must not fight: no data-theme attribute means
+   "follow the system", and an attribute overrides it. Safe House is black and
+   white, so the scheme stays near-monochrome with one warm accent rather than
+   a second colour competing with the film.                                  */
 
 :root {
   --bg: #0b0b0c;
@@ -11,11 +13,15 @@
   --dim: #8a857c;
   --rule: #1f1f22;
   --accent: #c68a3e;
+  /* Native audio controls cannot be restyled, but the browser's own light
+     widget can at least be stopped from glowing white on a dark page. */
+  --audio-filter: invert(0.92) hue-rotate(180deg);
   color-scheme: dark;
 }
 
+/* System says light, and nobody has overridden it. */
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme="dark"]) {
     --bg: #f5f2eb;
     --fg: #141416;
     --dim: #5f5b54;
@@ -23,8 +29,34 @@
     /* Darker than the dark-mode accent: the same ochre on a pale ground would
        not hold its contrast. */
     --accent: #8f5d1c;
+    --audio-filter: none;
     color-scheme: light;
   }
+}
+
+/* An explicit choice wins in both directions, whatever the system says. */
+:root[data-theme="light"] {
+    --bg: #f5f2eb;
+    --fg: #141416;
+    --dim: #5f5b54;
+    --rule: #ded8cb;
+    /* Darker than the dark-mode accent: the same ochre on a pale ground would
+       not hold its contrast. */
+    --accent: #8f5d1c;
+    --audio-filter: none;
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0b0b0c;
+  --fg: #f4f1ea;
+  --dim: #8a857c;
+  --rule: #1f1f22;
+  --accent: #c68a3e;
+  /* Native audio controls cannot be restyled, but the browser's own light
+     widget can at least be stopped from glowing white on a dark page. */
+  --audio-filter: invert(0.92) hue-rotate(180deg);
+  color-scheme: dark;
 }
 
 /* `inline` makes the generated utilities point at the variable rather than
@@ -113,9 +145,7 @@ audio {
   width: 100%;
   max-width: 28rem;
   height: 2.25rem;
-}
-@media (prefers-color-scheme: dark) {
-  audio { filter: invert(0.92) hue-rotate(180deg); }
+  filter: var(--audio-filter);
 }
 
 /* --------------------------------------------------------------- markdown --

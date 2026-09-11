@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import Footer from '@/components/Footer'
 import type { Metadata } from 'next'
 import NavBar from '@/components/NavBar'
 import Lightbox, { type Shot } from '@/components/Lightbox'
@@ -102,9 +103,7 @@ export default async function WorkPage({ params }: Props) {
           </div>
         )}
 
-        <footer className="mt-14 py-10 text-sm text-dim">
-          {new Date().getFullYear()}
-        </footer>
+        <div className="mt-14"><Footer /></div>
       </div>
     </>
   )

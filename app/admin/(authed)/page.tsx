@@ -51,9 +51,9 @@ export default async function AdminItems({
             {group.length === 0 ? (
               <p className="mt-3 text-sm text-dim">Nothing here yet.</p>
             ) : (
-              <ul className="mt-2">
+              <ul className="mt-2 divide-y divide-rule">
                 {group.map((item, index) => (
-                  <li key={item.id} className="flex items-center gap-1 border-b border-rule py-1">
+                  <li key={item.id} className="flex items-center gap-1 py-1">
                     <Link href={`/admin/items/${item.id}`} className="min-w-0 flex-1 py-3">
                       <span className="block truncate text-base">
                         {item.featured && <span className="text-accent" title="Featured">★ </span>}

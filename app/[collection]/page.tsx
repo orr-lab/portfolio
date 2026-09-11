@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Footer from '@/components/Footer'
 import type { Metadata } from 'next'
 import NavBar from '@/components/NavBar'
 import { layoutFor } from '@/components/layouts'
@@ -54,9 +55,7 @@ export default async function CollectionPage({ params }: Props) {
         )}
       </main>
 
-      <footer className="py-10 text-sm text-dim">
-        {new Date().getFullYear()}
-      </footer>
+      <Footer />
     </div>
   )
 }

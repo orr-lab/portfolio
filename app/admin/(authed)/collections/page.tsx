@@ -19,11 +19,11 @@ export default async function AdminCollections() {
         A new kind of work is a row here. It never needs new code.
       </p>
 
-      <ul className="mt-6">
+      <ul className="mt-6 divide-y divide-rule">
         {collections.map((c, index) => {
           const count = items.filter((i) => i.collectionId === c.id).length
           return (
-            <li key={c.id} className="flex items-center gap-1 border-b border-rule py-1">
+            <li key={c.id} className="flex items-center gap-1 py-1">
               <Link href={`/admin/collections/${c.id}`} className="min-w-0 flex-1 py-3">
                 <span className="block truncate text-base">
                   {c.title}

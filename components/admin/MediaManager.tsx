@@ -134,9 +134,9 @@ export default function MediaManager({
       {media.length === 0 ? (
         <p className="mt-5 text-sm text-dim">Nothing yet.</p>
       ) : (
-        <ul className="mt-5">
+        <ul className="mt-5 divide-y divide-rule">
           {media.map((m, i) => (
-            <li key={m.id} className="border-b border-rule py-3">
+            <li key={m.id} className="py-3">
               <div className="flex items-center gap-2">
                 <span className="w-14 shrink-0 text-xs tracking-wide text-dim uppercase">
                   {m.kind}

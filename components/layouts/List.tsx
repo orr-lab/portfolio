@@ -23,9 +23,10 @@ export default function List({ items, collection }: LayoutProps) {
   const eager = totalEmbeds <= EAGER_EMBED_LIMIT
 
   return (
-    // No border-t: whatever sits above (a page header or a section heading)
-    // already provides the rule, and doubling them reads as an empty row.
-    <ul>
+    // divide-y puts a rule between rows and none after the last, which is what
+    // stops the final row's border stacking with the next section's own rule
+    // and reading as an empty row.
+    <ul className="divide-y divide-rule">
       {items.map((item) => {
         const audio = showMedia ? item.media.filter((m) => m.kind === 'audio') : []
         const files = showMedia ? item.media.filter((m) => m.kind === 'file') : []
@@ -36,7 +37,7 @@ export default function List({ items, collection }: LayoutProps) {
         const embeds = showMedia ? item.media.filter((m) => m.kind === 'embed') : []
 
         return (
-          <li key={item.id} className={`border-b border-rule ${pad}`}>
+          <li key={item.id} className={pad}>
             <div className="flex items-baseline justify-between gap-4">
               <div className="min-w-0">
                 <span className="text-base"><ItemTitle item={item} /></span>

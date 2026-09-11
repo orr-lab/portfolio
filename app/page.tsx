@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Footer from '@/components/Footer'
 import Hero from '@/components/Hero'
 import NavBar from '@/components/NavBar'
 import Featured from '@/components/Featured'
@@ -75,7 +76,7 @@ export default async function Hub() {
       <Portrait />
 
       <div className="mx-auto max-w-4xl px-6 sm:px-8">
-        <footer className="py-10 text-sm text-dim">{new Date().getFullYear()}</footer>
+        <Footer />
       </div>
     </>
   )

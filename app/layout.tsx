@@ -41,8 +41,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // data-scroll-behavior tells Next the smooth scrolling in globals.css is
     // deliberate, so it does not warn about it on every route change.
-    <html lang="en" data-scroll-behavior="smooth" className={`${text.variable} ${display.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${text.variable} ${display.variable}`}
+      // The script below sets an attribute on this element before React sees
+      // it, which is exactly the mismatch this suppresses.
+      suppressHydrationWarning
+    >
+      <body>
+        {/* Runs before anything paints, so a reader who chose light does not
+            get a flash of the dark theme first. Inline and tiny on purpose:
+            a separate file would arrive too late to prevent it. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   )
 }
