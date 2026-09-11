@@ -168,11 +168,33 @@ for (const i of items) {
   )
 }
 
+// Media. Idempotent by (item, url), so re-running never duplicates a row.
+const media = [
+  { item: 'safe-house', kind: 'embed', url: 'https://www.youtube.com/watch?v=uYi4nLWT7X8',
+    caption: null, sort_order: 0 },
+  { item: 'game-music-medley', kind: 'embed', url: 'https://youtu.be/3GrGEhB4eQQ',
+    caption: null, sort_order: 0 },
+  { item: 'game-music-medley', kind: 'file', caption: 'Score (PDF)', sort_order: 1,
+    url: 'https://xbqrbml01ydz30oy.public.blob.vercel-storage.com/music/game-music-medley-score.pdf' },
+]
+
+for (const m of media) {
+  await client.query(
+    `insert into media (item_id, kind, url, caption, sort_order)
+     select i.id, $2, $3, $4, $5 from items i
+     where i.slug = $1
+       and not exists (select 1 from media x where x.item_id = i.id and x.url = $3)`,
+    [m.item, m.kind, m.url, m.caption, m.sort_order],
+  )
+}
+
 const counts = await client.query(`
   select c.sort_order, c.slug, c.layout, c.visible,
-         count(i.id) filter (where i.status = 'published') as published,
-         count(i.id) filter (where i.status = 'draft')     as drafts
+         count(distinct i.id) filter (where i.status = 'published') as published,
+         count(distinct i.id) filter (where i.status = 'draft')     as drafts,
+         count(distinct m.id) as media
   from collections c left join items i on i.collection_id = c.id
+       left join media m on m.item_id = i.id
   group by c.id order by c.sort_order
 `)
 console.table(counts.rows)
