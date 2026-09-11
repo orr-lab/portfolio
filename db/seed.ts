@@ -65,7 +65,7 @@ const items = [
     featured: false, sort_order: 1, status: 'published' },
 
   { c: 'code', slug: 'cubing-site', title: 'Cubing site', subtitle: null,
-    blurb: 'Speedcubing timer with accounts and a global leaderboard.',
+    blurb: 'Speedcubing timer with accounts and a global leaderboard. Built by hand for my Bagrut.',
     body: null, tags: [], year: null, date_label: null,
     url: 'https://cubingsite.orrknaan.com', url_label: 'cubingsite.orrknaan.com',
     featured: false, sort_order: 2, status: 'published' },
@@ -176,6 +176,14 @@ const media = [
   // sort_order -1 so the audio leads: if you can hear it, that is the point.
   { item: 'game-music-medley', kind: 'audio', caption: null, sort_order: -1,
     url: 'https://xbqrbml01ydz30oy.public.blob.vercel-storage.com/music/game-music-medley.mp3' },
+  // Only the public repos. iasa-schedule and board-game-shelf are private, so
+  // they get no link until Orr opens them.
+  { item: 'piano-log', kind: 'link', caption: 'GitHub', sort_order: 1,
+    url: 'https://github.com/orr-lab/piano-log' },
+  { item: 'cubing-site', kind: 'link', caption: 'GitHub', sort_order: 1,
+    url: 'https://github.com/orr-lab/cubingSite' },
+  { item: 'music-theory-trainer', kind: 'link', caption: 'GitHub', sort_order: 1,
+    url: 'https://github.com/orr-lab/music-trainer' },
   { item: 'game-music-medley', kind: 'file', caption: 'Score (PDF)', sort_order: 1,
     url: 'https://xbqrbml01ydz30oy.public.blob.vercel-storage.com/music/game-music-medley-score.pdf' },
 ]

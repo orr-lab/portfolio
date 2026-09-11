@@ -1,5 +1,5 @@
 import { Cover } from '@/components/Media'
-import { Blurb, DateText, ExternalLink, ItemTitle, Subtitle, Tags } from '@/components/Bits'
+import { Blurb, DateText, ItemTitle, Links, Subtitle, Tags } from '@/components/Bits'
 import type { LayoutProps } from '@/lib/types'
 import { cover } from '@/lib/types'
 
@@ -34,7 +34,7 @@ export default function Grid({ items, collection }: LayoutProps) {
             </div>
             <Blurb item={item} collection={collection} className="mt-2 text-sm text-dim" />
             <Tags item={item} collection={collection} />
-            <div className="mt-auto pt-4"><ExternalLink item={item} /></div>
+            <Links item={item} className="mt-auto pt-4" />
           </article>
         )
       })}

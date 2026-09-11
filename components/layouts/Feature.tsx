@@ -1,5 +1,5 @@
 import { Cover, EmbedPlayer, leadMedia } from '@/components/Media'
-import { Blurb, DateText, ExternalLink, ItemTitle, Subtitle, Tags } from '@/components/Bits'
+import { Blurb, DateText, ItemTitle, Links, Subtitle, Tags } from '@/components/Bits'
 import type { LayoutProps } from '@/lib/types'
 
 /** One item per row, full width, large player or cover. For films. */
@@ -26,7 +26,7 @@ export default function Feature({ items, collection }: LayoutProps) {
               </div>
               <Blurb item={item} collection={collection} className="mt-3 max-w-prose text-dim" />
               <Tags item={item} collection={collection} />
-              <div className="mt-3"><ExternalLink item={item} /></div>
+              <Links item={item} className="mt-3" />
             </div>
           </article>
         )

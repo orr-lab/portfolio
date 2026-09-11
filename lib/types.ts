@@ -4,7 +4,7 @@
 export type Layout =
   | 'feature' | 'grid' | 'list' | 'gallery' | 'prose' | 'timeline' | 'index'
 
-export type MediaKind = 'image' | 'video' | 'audio' | 'file' | 'embed'
+export type MediaKind = 'image' | 'video' | 'audio' | 'file' | 'embed' | 'link'
 export type MediaMode = 'cover' | 'player' | 'none'
 export type SortMode = 'manual' | 'year_desc' | 'year_asc' | 'alpha'
 export type Density = 'comfortable' | 'compact'
@@ -30,6 +30,8 @@ export type Item = {
   url: string | null
   urlLabel: string | null
   featured: boolean
+  status: 'draft' | 'published'
+  sortOrder: number
   /** Ordered by sort_order. The first entry is the cover, by definition. */
   media: Media[]
 }

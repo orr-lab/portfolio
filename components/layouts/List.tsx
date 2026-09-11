@@ -1,6 +1,6 @@
 import { AudioPlayer, FileLink } from '@/components/Media'
 import InlineEmbed from '@/components/InlineEmbed'
-import { Blurb, DateText, ItemTitle, Subtitle } from '@/components/Bits'
+import { Blurb, DateText, ItemTitle, Links, Subtitle } from '@/components/Bits'
 import type { LayoutProps } from '@/lib/types'
 
 /**
@@ -68,6 +68,8 @@ export default function List({ items, collection }: LayoutProps) {
                 {files.map((m) => <FileLink key={m.id} media={m} />)}
               </div>
             )}
+
+            <Links item={item} className="mt-2" />
           </li>
         )
       })}

@@ -25,6 +25,8 @@ function toItem(r: any): Item {
     blurb: r.blurb, body: r.body, tags: r.tags ?? [], year: r.year,
     dateLabel: r.date_label, url: r.url, urlLabel: r.url_label,
     featured: r.featured,
+    status: r.status,
+    sortOrder: r.sort_order,
     media: (r.media ?? []).map((m: any) => ({
       id: m.id, kind: m.kind, url: m.url, caption: m.caption,
     })),

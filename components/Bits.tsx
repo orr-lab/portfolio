@@ -35,17 +35,47 @@ export function Tags({ item, collection }: { item: Item; collection: Collection 
   )
 }
 
-export function ExternalLink({ item }: { item: Item }) {
-  if (!item.url) return null
+/** Falls back to the host when a link has no caption, so it is never bare. */
+function hostOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
+
+/**
+ * Every outbound link an item has: its own url first, then any 'link' media
+ * rows. That is what lets a project point at both the live site and its
+ * source without the schema growing a column per kind of link.
+ */
+export function Links({ item, className = '' }: { item: Item; className?: string }) {
+  const extra = item.media.filter((m) => m.kind === 'link')
+  if (!item.url && extra.length === 0) return null
   return (
-    <a
-      href={item.url}
-      className="text-sm text-accent underline-offset-4 hover:underline"
-      target="_blank"
-      rel="noreferrer"
-    >
-      {item.urlLabel ?? item.url.replace(/^https?:\/\//, '')} ↗
-    </a>
+    <div className={`flex flex-wrap gap-x-4 gap-y-1 ${className}`}>
+      {item.url && (
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-accent underline-offset-4 hover:underline"
+        >
+          {item.urlLabel ?? hostOf(item.url)} ↗
+        </a>
+      )}
+      {extra.map((m) => (
+        <a
+          key={m.id}
+          href={m.url}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-dim underline underline-offset-4 hover:text-accent"
+        >
+          {m.caption ?? hostOf(m.url)} ↗
+        </a>
+      ))}
+    </div>
   )
 }
 
