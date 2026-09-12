@@ -82,6 +82,14 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
 
   const current = open === null ? null : shots[open]
 
+  // One look for every control floating over an image: a 44px disc, dark
+  // enough to carry a pale glyph, with a hairline so it still separates from a
+  // black photograph.
+  const control =
+    'absolute inline-flex h-11 w-11 items-center justify-center rounded-full ' +
+    'bg-black/60 text-[#f4f1ea] ring-1 ring-white/20 backdrop-blur-sm ' +
+    'transition-colors hover:bg-black/80 hover:text-accent'
+
   return (
     <>
       <div className={`${cols} gap-2 sm:gap-3`}>
@@ -158,12 +166,15 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
             <p className="text-xs text-[#8a857c]">{open! + 1} / {shots.length}</p>
           </div>
 
-          <button type="button" onClick={close}
-            className="absolute top-4 right-5 text-2xl text-[#cfcabf]" aria-label="Close">×</button>
-          <button type="button" onClick={(e) => { e.stopPropagation(); step(-1) }}
-            className="absolute top-1/2 left-3 text-3xl text-[#cfcabf]" aria-label="Previous">‹</button>
-          <button type="button" onClick={(e) => { e.stopPropagation(); step(1) }}
-            className="absolute top-1/2 right-3 text-3xl text-[#cfcabf]" aria-label="Next">›</button>
+          {/* These sit on top of the picture, and a drawing on white paper
+              leaves a bare glyph invisible. Each gets its own dark disc so it
+              reads against anything underneath it. */}
+          <button type="button" onClick={close} aria-label="Close"
+            className={`${control} top-4 right-4 text-2xl`}>×</button>
+          <button type="button" onClick={(e) => { e.stopPropagation(); step(-1) }} aria-label="Previous"
+            className={`${control} top-1/2 left-3 -translate-y-1/2 pb-0.5 text-3xl`}>‹</button>
+          <button type="button" onClick={(e) => { e.stopPropagation(); step(1) }} aria-label="Next"
+            className={`${control} top-1/2 right-3 -translate-y-1/2 pb-0.5 text-3xl`}>›</button>
         </div>
       )}
     </>
