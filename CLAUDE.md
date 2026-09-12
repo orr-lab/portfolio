@@ -72,8 +72,27 @@ flag by construction. Combinations that must not break:
 
 ## Audio
 
-Plain `<audio>` with a minimal custom skin. **No persistent cross-page player.**
-Music stops on navigation; that is accepted and deliberate.
+One `<audio>` element for the whole site, held by `components/AudioProvider.tsx`
+in the root layout. Every player on the page — a track's own row, and the
+now-playing bar — is a remote control for it, which is why they can never
+disagree about what is playing or where it has got to.
+
+It keeps playing across pages because client-side navigation never unmounts the
+root layout. **That depends on every internal link being `next/link`**: a plain
+`<a href="/films">` reloads the document and kills playback. The nav bar used
+plain anchors and that is exactly what broke it. Anchors within a page
+(`href="#films"` on the hub) are correct and should stay.
+
+The brief originally said no persistent player and that music stopping on
+navigation was accepted. Orr reversed that deliberately.
+
+`--player-h` is 0 until something plays, then the bar's height. The nav bar and
+`.section-anchor` offset themselves from it, so neither knows anything about
+audio beyond that one number.
+
+Track length is measured in the browser at upload and stored, so a duration can
+be shown with `preload="none"` and nothing downloaded. The alternative,
+`preload="metadata"`, would mean one range request per track on a list of forty.
 
 ## Icons
 

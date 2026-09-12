@@ -8,6 +8,8 @@
    a second colour competing with the film.                                  */
 
 :root {
+  /* Height of the now-playing bar: zero until something plays. */
+  --player-h: 0px;
   --bg: #0b0b0c;
   --fg: #f4f1ea;
   --dim: #8a857c;
@@ -127,6 +129,9 @@ body {
   background: var(--accent);
   color: var(--bg);
 }
+
+/* Section anchors clear both fixed bars, whether or not music is playing. */
+.section-anchor { scroll-margin-top: calc(5.5rem + var(--player-h, 0px)); }
 
 /* Anchor jumps from the nav bar glide rather than snap. */
 @media (prefers-reduced-motion: no-preference) {

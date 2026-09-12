@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Archivo, Instrument_Serif } from 'next/font/google'
 import './globals.css'
+import AudioProvider from '@/components/AudioProvider'
+import NowPlaying from '@/components/NowPlaying'
 
 // next/font downloads these at build time and serves them from our own domain,
 // so there is no request to Google and no flash of the wrong typeface.
@@ -58,7 +60,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`,
           }}
         />
-        {children}
+        {/* One <audio> for the whole site. Client-side navigation never
+            unmounts the root layout, which is exactly why the music keeps
+            playing when you open another page. */}
+        <AudioProvider>
+          <NowPlaying />
+          {children}
+        </AudioProvider>
       </body>
     </html>
   )

@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { iconForUrl } from './Icons'
+import { iconForUrl, serviceNameFor } from './Icons'
 
 export type Shot = {
   id: string
@@ -18,23 +18,28 @@ export type Shot = {
   height: number | null
 }
 
-/** A link with its service's mark, when the site recognises the host. */
-function SourceLink({ href, className = '' }: { href: string; className?: string }) {
+/**
+ * A link to wherever an image came from: its service's mark AND that service's
+ * name. The mark alone was a 14px dot with nothing to read and nothing much to
+ * hit — it has to be big enough for a thumb and say where it goes.
+ */
+function SourceLink({ href, big = false }: { href: string; big?: boolean }) {
   const Icon = iconForUrl(href)
-  let label = 'Source'
-  try {
-    label = new URL(href).hostname.replace(/^www\.|^open\./, '')
-  } catch { /* keep the fallback */ }
   return (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
+      // Inside the lightbox this sits on a click-to-close backdrop.
       onClick={(e) => e.stopPropagation()}
-      className={`inline-flex items-center gap-1.5 text-xs text-dim underline-offset-4 hover:text-accent ${className}`}
+      className={
+        big
+          ? 'inline-flex min-h-11 items-center gap-2 px-3 text-sm text-[#cfcabf] underline-offset-4 hover:text-accent'
+          : 'inline-flex min-h-11 items-center gap-1.5 text-xs text-dim underline-offset-4 hover:text-accent'
+      }
     >
-      {Icon ? <Icon size={14} /> : null}
-      {Icon ? '' : label}
+      {Icon && <Icon size={big ? 20 : 16} />}
+      {serviceNameFor(href)}
     </a>
   )
 }
@@ -115,7 +120,7 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
           {/* Not a title and not a card — a drawing's number, date and where it
               came from. Kept small and quiet so the wall still reads as a wall. */}
           {(shot.caption || shot.linkUrl) && (
-            <figcaption className="mt-1 flex items-center gap-2 text-xs text-dim">
+            <figcaption className="flex min-h-11 flex-wrap items-center gap-x-3 text-xs text-dim">
               {shot.caption && <span className="tabular-nums">{shot.caption}</span>}
               {shot.linkUrl && <SourceLink href={shot.linkUrl} />}
             </figcaption>
@@ -144,9 +149,7 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
             {current.caption && <p className="text-sm text-[#cfcabf]">{current.caption}</p>}
             {/* A gallery tap opens the lightbox, so an item with a body would
                 otherwise have an unreachable detail page. This is its way in. */}
-            {current.linkUrl && (
-              <SourceLink href={current.linkUrl} className="text-[#cfcabf]" />
-            )}
+            {current.linkUrl && <SourceLink href={current.linkUrl} big />}
             {current.href && (
               <Link href={current.href} className="text-sm text-accent underline underline-offset-4">
                 Read more

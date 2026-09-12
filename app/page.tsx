@@ -48,8 +48,8 @@ export default async function Hub() {
             <section
               key={collection.id}
               id={collection.slug}
-              // scroll-margin keeps the heading clear of the sticky bar.
-              className="scroll-mt-24 border-t border-rule py-12 sm:py-16"
+              // section-anchor keeps the heading clear of the fixed bars.
+              className="section-anchor border-t border-rule py-12 sm:py-16"
             >
               <h2 className="eyebrow">{collection.title}</h2>
               {collection.blurb && <p className="mt-3 mb-8 max-w-prose text-lg">{collection.blurb}</p>}

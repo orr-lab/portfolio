@@ -53,7 +53,7 @@ export default function List({ items, collection }: LayoutProps) {
 
             <Blurb item={item} collection={collection} className="mt-1 text-sm text-dim" />
 
-            {audio.map((m) => <AudioPlayer key={m.id} media={m} />)}
+            {audio.map((m) => <AudioPlayer key={m.id} media={m} title={item.title} />)}
 
             {!audioWins && embeds.map((m) => (
               <InlineEmbed key={m.id} url={m.url} label={m.caption ?? 'Listen'} eager={eager} />

@@ -56,6 +56,21 @@ export function MailIcon({ size = 21 }: { size?: number }) {
  * Returning null is a real answer: GitHub has no mark here on purpose, and an
  * unknown host should simply render as text.
  */
+export function serviceNameFor(url: string): string {
+  try {
+    const u = new URL(url)
+    if (u.protocol === 'mailto:') return 'Email'
+    const host = u.hostname.replace(/^www\.|^open\./, '').toLowerCase()
+    if (host === 'youtube.com' || host === 'youtu.be' || host === 'm.youtube.com') return 'YouTube'
+    if (host === 'instagram.com') return 'Instagram'
+    if (host === 'spotify.com') return 'Spotify'
+    if (host === 'github.com') return 'GitHub'
+    return host
+  } catch {
+    return 'Link'
+  }
+}
+
 export function iconForUrl(url: string): ((p: { size?: number }) => React.ReactElement) | null {
   let host: string
   try {

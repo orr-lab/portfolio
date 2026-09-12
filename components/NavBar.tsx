@@ -81,7 +81,10 @@ export default function NavBar({ collections, mode, activeSlug }: Props) {
 
   return (
     <div
-      className={`fixed top-0 right-0 left-0 z-40 border-b border-rule bg-bg/90 backdrop-blur transition-opacity duration-200 ${
+      // --player-h is 0 until something is playing, then the height of the
+      // now-playing bar. The nav knows nothing about audio beyond this number.
+      style={{ top: 'var(--player-h, 0px)' }}
+      className={`fixed right-0 left-0 z-40 border-b border-rule bg-bg/90 backdrop-blur transition-[top,opacity] duration-200 ${
         shown ? 'opacity-100' : 'pointer-events-none opacity-0'
       }`}
     >
@@ -91,18 +94,27 @@ export default function NavBar({ collections, mode, activeSlug }: Props) {
         </Link>
         {/* One horizontally scrollable row on a phone. Never a hamburger. */}
         <nav className="-mx-2 flex flex-1 gap-4 overflow-x-auto px-2 sm:justify-end [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {collections.map((c) => (
-            <a
-              key={c.id}
-              href={mode === 'hub' ? `#${c.slug}` : `/${c.slug}`}
-              className={`shrink-0 text-sm whitespace-nowrap transition-colors ${
-                active === c.slug ? 'text-accent' : 'text-dim hover:text-fg'
-              }`}
-              aria-current={active === c.slug ? 'true' : undefined}
-            >
-              {c.title}
-            </a>
-          ))}
+          {collections.map((c) => {
+            const className = `shrink-0 text-sm whitespace-nowrap transition-colors ${
+              active === c.slug ? 'text-accent' : 'text-dim hover:text-fg'
+            }`
+            const current = active === c.slug ? 'true' : undefined
+
+            // On the hub these are anchors into the page being read, so a plain
+            // <a> is right. Anywhere else they are navigation, and must be
+            // Link: a plain <a> reloads the whole document, which throws away
+            // anything playing and re-downloads a page React could have swapped
+            // in place.
+            return mode === 'hub' ? (
+              <a key={c.id} href={`#${c.slug}`} className={className} aria-current={current}>
+                {c.title}
+              </a>
+            ) : (
+              <Link key={c.id} href={`/${c.slug}`} className={className} aria-current={current}>
+                {c.title}
+              </Link>
+            )
+          })}
         </nav>
       </div>
     </div>

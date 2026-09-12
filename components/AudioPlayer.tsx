@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useAudio } from './AudioProvider'
 import type { Media } from '@/lib/types'
 
 function clock(seconds: number): string {
@@ -11,78 +11,35 @@ function clock(seconds: number): string {
 }
 
 /**
- * A player built from an <audio> element with its own controls hidden. The
- * native ones cannot be styled and look different in every browser; this is the
- * same element underneath, so playback, seeking and the OS media keys all still
- * work — only the buttons are ours.
- *
- * Still deliberately not persistent across pages: music stops on navigation,
- * which is the trade the brief accepted.
+ * The player shown on a track's own row. It owns no <audio> element of its own:
+ * it asks the one in the root layout to play this track, and reads its state
+ * back. That is what lets the music carry on when you open another page — and
+ * it also means this row and the bar at the top can never disagree about
+ * what is playing or where it has got to.
  */
-export default function AudioPlayer({ media }: { media: Media }) {
-  const ref = useRef<HTMLAudioElement>(null)
-  const [playing, setPlaying] = useState(false)
-  const [at, setAt] = useState(0)
-  // The length measured at upload, so the number is there before anything is
-  // downloaded. The file itself corrects it once it loads.
-  const [length, setLength] = useState(media.durationSeconds ?? 0)
-  const [scrubbing, setScrubbing] = useState(false)
+export default function AudioPlayer({ media, title }: { media: Media; title: string }) {
+  const { current, playing, at, length, play, toggle, seek } = useAudio()
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const onTime = () => { if (!scrubbing) setAt(el.currentTime) }
-    const onMeta = () => { if (Number.isFinite(el.duration)) setLength(el.duration) }
-    const onPlay = () => setPlaying(true)
-    const onPause = () => setPlaying(false)
-    const onEnd = () => { setPlaying(false); setAt(0) }
-    el.addEventListener('timeupdate', onTime)
-    el.addEventListener('loadedmetadata', onMeta)
-    el.addEventListener('play', onPlay)
-    el.addEventListener('pause', onPause)
-    el.addEventListener('ended', onEnd)
-    return () => {
-      el.removeEventListener('timeupdate', onTime)
-      el.removeEventListener('loadedmetadata', onMeta)
-      el.removeEventListener('play', onPlay)
-      el.removeEventListener('pause', onPause)
-      el.removeEventListener('ended', onEnd)
-    }
-  }, [scrubbing])
-
-  function toggle() {
-    const el = ref.current
-    if (!el) return
-    if (el.paused) void el.play()
-    else el.pause()
-  }
-
-  function seek(to: number) {
-    const el = ref.current
-    if (el && Number.isFinite(to)) {
-      el.currentTime = to
-      setAt(to)
-    }
-  }
-
-  const progress = length > 0 ? (at / length) * 100 : 0
+  const isMine = current?.id === media.id
+  const shownAt = isMine ? at : 0
+  const shownLength = isMine && length ? length : (media.durationSeconds ?? 0)
+  const progress = shownLength > 0 ? (shownAt / shownLength) * 100 : 0
 
   return (
     <div className="mt-3 max-w-md">
       {media.caption && <div className="mb-1.5 text-xs text-dim">{media.caption}</div>}
 
-      {/* preload="none": nothing is fetched until someone presses play, which is
-          what keeps a list of forty compositions light. */}
-      <audio ref={ref} src={media.url} preload="none" />
-
       <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={toggle}
-          aria-label={playing ? 'Pause' : 'Play'}
+          onClick={() => {
+            if (isMine) toggle()
+            else play({ id: media.id, url: media.url, title, duration: media.durationSeconds })
+          }}
+          aria-label={isMine && playing ? `Pause ${title}` : `Play ${title}`}
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-rule text-accent hover:border-accent"
         >
-          {playing ? (
+          {isMine && playing ? (
             <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
               <rect x="2" y="1.5" width="3.5" height="11" />
               <rect x="8.5" y="1.5" width="3.5" height="11" />
@@ -95,27 +52,21 @@ export default function AudioPlayer({ media }: { media: Media }) {
         </button>
 
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          {/* A range input rather than a styled div: it is seekable by keyboard
-              and announced properly, which a div would not be. */}
           <input
             type="range"
             min={0}
-            max={length || 0}
+            max={shownLength || 0}
             step={0.1}
-            value={at}
-            disabled={!length}
+            value={shownAt}
+            // Seeking a track that is not the one loaded would be meaningless.
+            disabled={!isMine || !shownLength}
             aria-label="Seek"
-            onPointerDown={() => setScrubbing(true)}
-            onPointerUp={() => setScrubbing(false)}
-            onChange={(e) => { setAt(Number(e.target.value)); if (!scrubbing) seek(Number(e.target.value)) }}
-            onMouseUp={(e) => seek(Number((e.target as HTMLInputElement).value))}
-            onTouchEnd={(e) => seek(Number((e.target as HTMLInputElement).value))}
-            onKeyUp={(e) => seek(Number((e.target as HTMLInputElement).value))}
+            onChange={(e) => seek(Number(e.target.value))}
             className="audio-seek min-w-0 flex-1"
             style={{ ['--progress' as string]: `${progress}%` }}
           />
           <span className="shrink-0 text-xs text-dim tabular-nums">
-            {clock(at)} / {clock(length)}
+            {clock(shownAt)} / {clock(shownLength)}
           </span>
         </div>
       </div>
