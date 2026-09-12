@@ -92,8 +92,9 @@ const items = [
     featured: false, sort_order: 5, status: 'published' },
 
   { c: 'code', slug: 'this-site', title: 'This site', subtitle: null,
-    blurb: 'Next.js, Postgres, and a form I can fill from my phone.',
-    body: null, tags: ['next.js', 'typescript', 'postgres'], year: null, date_label: null,
+    blurb: 'This site, and a template anyone can fork to make their own. Seven layouts, everything editable from a phone.',
+    body: null, tags: ['next.js', 'typescript', 'postgres', 'template'],
+    year: null, date_label: null,
     url: 'https://github.com/orr-lab/portfolio', url_label: 'github.com/orr-lab/portfolio',
     featured: false, sort_order: 6, status: 'published' },
 
