@@ -42,19 +42,6 @@ export function Cover({ media, sizes, priority = false }: {
   )
 }
 
-/**
- * Plain <audio> with a restrained skin. Deliberately not a persistent player:
- * music stops on navigation, and that trade was made on purpose.
- */
-export function AudioPlayer({ media }: { media: Media }) {
-  return (
-    <div className="mt-3">
-      {media.caption && <div className="mb-1 text-xs text-dim">{media.caption}</div>}
-      <audio controls preload="none" src={media.url} className="h-9 w-full max-w-md" />
-    </div>
-  )
-}
-
 /** Small text link for a 'file' media row — a score PDF, a stem, a zip. */
 export function FileLink({ media }: { media: Media }) {
   return (

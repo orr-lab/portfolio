@@ -19,6 +19,10 @@ export type Media = {
   height: number | null
   /** ISO date the image was made, when known. Drives the numbering below. */
   takenOn: string | null
+  /** Where this picture or file came from, if anywhere. */
+  linkUrl: string | null
+  /** Length of an audio or video file in seconds, measured at upload. */
+  durationSeconds: number | null
 }
 
 export type Item = {

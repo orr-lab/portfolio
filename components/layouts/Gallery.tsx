@@ -22,6 +22,7 @@ export default function Gallery({ items, collection }: LayoutProps) {
     id: m.id,
     url: m.url,
     caption: captionFor(m, numbers),
+    linkUrl: m.linkUrl,
     width: m.width,
     height: m.height,
     href: detailHref(item),

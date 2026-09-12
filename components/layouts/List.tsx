@@ -1,4 +1,5 @@
-import { AudioPlayer, FileLink } from '@/components/Media'
+import { FileLink } from '@/components/Media'
+import AudioPlayer from '@/components/AudioPlayer'
 import InlineEmbed from '@/components/InlineEmbed'
 import { Blurb, DateText, ItemTitle, Links, Subtitle } from '@/components/Bits'
 import type { LayoutProps } from '@/lib/types'

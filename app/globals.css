@@ -141,11 +141,45 @@ body {
 
 /* Native audio controls cannot be restyled, but they can be calmed down: in
    dark mode the browser's own light widget is inverted to sit on the page. */
-audio {
-  width: 100%;
-  max-width: 28rem;
-  height: 2.25rem;
-  filter: var(--audio-filter);
+/* ------------------------------------------------------------ seek slider --
+   A range input styled into a hairline with a small handle. Both vendor
+   prefixes are needed; there is still no standard way to reach these parts.  */
+
+.audio-seek {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  height: 2.75rem;      /* a thumb-sized target around a 2px line */
+  cursor: pointer;
+}
+.audio-seek:disabled { cursor: default; opacity: 0.5; }
+
+.audio-seek::-webkit-slider-runnable-track {
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--progress, 0%),
+    var(--rule) var(--progress, 0%)
+  );
+}
+.audio-seek::-moz-range-track { height: 2px; background: var(--rule); }
+.audio-seek::-moz-range-progress { height: 2px; background: var(--accent); }
+
+.audio-seek::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.audio-seek::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 /* --------------------------------------------------------------- markdown --

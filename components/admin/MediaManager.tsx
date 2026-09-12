@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { upload } from '@vercel/blob/client'
 import {
   addUploadedMedia, deleteMedia, moveMedia, setMediaCaption, setMediaDate,
+  setMediaLink,
 } from '@/app/admin/actions'
 import type { Media } from '@/lib/types'
 import { inputClass } from './Field'
@@ -43,6 +44,25 @@ export default function MediaManager({
     }
   }
 
+  /** Reads an audio or video file's length once, here, so the player can show
+      it without every visitor fetching part of every track to find out. */
+  async function measureDuration(file: File): Promise<number | null> {
+    if (!file.type.startsWith('audio/') && !file.type.startsWith('video/')) return null
+    const url = URL.createObjectURL(file)
+    try {
+      return await new Promise<number | null>((resolve) => {
+        const el = document.createElement(file.type.startsWith('audio/') ? 'audio' : 'video')
+        el.preload = 'metadata'
+        el.onloadedmetadata = () => resolve(Number.isFinite(el.duration) ? Math.round(el.duration) : null)
+        el.onerror = () => resolve(null)
+        el.src = url
+        setTimeout(() => resolve(null), 15000)
+      })
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
     if (files.length === 0) return
@@ -53,6 +73,7 @@ export default function MediaManager({
     for (const [i, file] of files.entries()) {
       try {
         const size = await measure(file)
+        const seconds = await measureDuration(file)
         const result = await upload(file.name, file, {
           access: 'public',
           handleUploadUrl: '/api/blob/upload',
@@ -67,7 +88,7 @@ export default function MediaManager({
           : null
         await addUploadedMedia(
           itemId, result.url, file.type || 'application/octet-stream', atTop,
-          size?.width, size?.height, takenOn,
+          size?.width, size?.height, takenOn, seconds,
         )
         setJobs((js) => js.map((j, n) => (n === i ? { ...j, percent: 100 } : j)))
       } catch (err) {
@@ -178,6 +199,20 @@ export default function MediaManager({
                   name="caption"
                   defaultValue={m.caption ?? ''}
                   placeholder="Caption"
+                  className={`${inputClass} py-2 text-sm`}
+                />
+                <button className="min-h-11 shrink-0 px-3 text-sm text-dim hover:text-accent">
+                  Save
+                </button>
+              </form>
+              <form action={setMediaLink} className="mt-2 flex gap-2">
+                <input type="hidden" name="id" value={m.id} />
+                <input
+                  name="linkUrl"
+                  defaultValue={m.linkUrl ?? ''}
+                  placeholder="Link (Instagram, Spotify, anywhere)"
+                  inputMode="url"
+                  autoCapitalize="off"
                   className={`${inputClass} py-2 text-sm`}
                 />
                 <button className="min-h-11 shrink-0 px-3 text-sm text-dim hover:text-accent">

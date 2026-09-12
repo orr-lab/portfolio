@@ -30,6 +30,7 @@ function toItem(r: any): Item {
     media: (r.media ?? []).map((m: any) => ({
       id: m.id, kind: m.kind, url: m.url, caption: m.caption,
       width: m.width, height: m.height, takenOn: m.takenOn ?? null,
+      linkUrl: m.linkUrl ?? null, durationSeconds: m.durationSeconds ?? null,
     })),
   }
 }
@@ -60,7 +61,8 @@ export async function listPublishedItems(collectionId?: string): Promise<Item[]>
           select json_agg(json_build_object(
             'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
         'width', x.width, 'height', x.height,
-        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD'), 'linkUrl', x.link_url,
+        'durationSeconds', x.duration_seconds
           ) order by x.sort_order) as media
           from media x where x.item_id = i.id
         ) m on true
@@ -73,7 +75,8 @@ export async function listPublishedItems(collectionId?: string): Promise<Item[]>
           select json_agg(json_build_object(
             'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
         'width', x.width, 'height', x.height,
-        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD'), 'linkUrl', x.link_url,
+        'durationSeconds', x.duration_seconds
           ) order by x.sort_order) as media
           from media x where x.item_id = i.id
         ) m on true
@@ -90,7 +93,8 @@ export async function getFeaturedItem(): Promise<Item | null> {
       select json_agg(json_build_object(
         'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
         'width', x.width, 'height', x.height,
-        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD'), 'linkUrl', x.link_url,
+        'durationSeconds', x.duration_seconds
       ) order by x.sort_order) as media
       from media x where x.item_id = i.id
     ) m on true
@@ -143,7 +147,8 @@ export async function getItemBySlug(
       select json_agg(json_build_object(
         'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
         'width', x.width, 'height', x.height,
-        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD'), 'linkUrl', x.link_url,
+        'durationSeconds', x.duration_seconds
       ) order by x.sort_order) as media
       from media x where x.item_id = i.id
     ) m on true

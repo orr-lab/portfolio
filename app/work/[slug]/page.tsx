@@ -4,7 +4,8 @@ import Footer from '@/components/Footer'
 import type { Metadata } from 'next'
 import NavBar from '@/components/NavBar'
 import Lightbox, { type Shot } from '@/components/Lightbox'
-import { AudioPlayer, Cover, EmbedPlayer, FileLink } from '@/components/Media'
+import { Cover, EmbedPlayer, FileLink } from '@/components/Media'
+import AudioPlayer from '@/components/AudioPlayer'
 import { getItemBySlug, listItemsWithBody, listNavCollections } from '@/lib/queries'
 import { renderMarkdown } from '@/lib/markdown'
 
@@ -44,7 +45,7 @@ export default async function WorkPage({ params }: Props) {
   const numbers = numberByDate(images)
   const shots: Shot[] = images.map((m) => ({
     id: m.id, url: m.url, caption: captionFor(m, numbers),
-    width: m.width, height: m.height, href: null,
+    linkUrl: m.linkUrl, width: m.width, height: m.height, href: null,
   }))
 
   return (

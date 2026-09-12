@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { checkPassword, isAuthed, startSession } from '@/lib/session'
 
@@ -37,10 +38,17 @@ export default async function LoginPage({
           className="mt-2 w-full border border-rule bg-transparent px-4 py-3 text-base"
         />
         {bad && <p className="mt-3 text-sm text-accent">Wrong password.</p>}
-        <button type="submit" className="mt-4 w-full border border-accent px-4 py-3 text-base text-accent">
+        <button type="submit" className="mt-4 min-h-12 w-full border border-accent px-4 text-base text-accent">
           Sign in
         </button>
       </form>
+
+      <Link
+        href="/"
+        className="mt-4 flex min-h-12 w-full items-center justify-center border border-rule px-4 text-base text-dim hover:border-accent hover:text-accent"
+      >
+        ← Back to the site
+      </Link>
     </main>
   )
 }

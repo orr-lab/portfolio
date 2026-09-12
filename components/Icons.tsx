@@ -67,6 +67,7 @@ export function iconForUrl(url: string): ((p: { size?: number }) => React.ReactE
   }
   if (host === 'youtube.com' || host === 'youtu.be' || host === 'm.youtube.com') return YouTubeIcon
   if (host === 'instagram.com') return InstagramIcon
+  if (host === 'spotify.com' || host === 'open.spotify.com') return SpotifyIcon
   return null
 }
 
@@ -83,6 +84,18 @@ export function MoonIcon({ size = 16 }: { size?: number }) {
   return (
     <svg {...base} width={size} height={size}>
       <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z" />
+    </svg>
+  )
+}
+
+export function SpotifyIcon({ size = 16 }: { size?: number }) {
+  return (
+    <svg {...base} width={size} height={size}>
+      <circle cx="12" cy="12" r="9.4" />
+      {/* The three arcs, tightening as they go down, are the whole mark. */}
+      <path d="M7.1 9.3c3.2-0.9 6.8-0.5 9.6 1.1" />
+      <path d="M7.8 12.4c2.6-0.7 5.6-0.4 8 1" />
+      <path d="M8.6 15.3c2-0.5 4.3-0.3 6.2 0.8" />
     </svg>
   )
 }

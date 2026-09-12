@@ -10,7 +10,8 @@ const MEDIA_JSON = `
     select json_agg(json_build_object(
       'id', x.id, 'kind', x.kind, 'url', x.url, 'caption', x.caption,
         'width', x.width, 'height', x.height,
-        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD')
+        'takenOn', to_char(x.taken_on, 'YYYY-MM-DD'), 'linkUrl', x.link_url,
+        'durationSeconds', x.duration_seconds
     ) order by x.sort_order) as media
     from media x where x.item_id = i.id
   ) m on true`
@@ -25,6 +26,7 @@ function toAdminItem(r: any): AdminItem {
     media: (r.media ?? []).map((x: any) => ({
       id: x.id, kind: x.kind, url: x.url, caption: x.caption,
       width: x.width, height: x.height, takenOn: x.takenOn ?? null,
+      linkUrl: x.linkUrl ?? null, durationSeconds: x.durationSeconds ?? null,
     })),
     collectionSlug: r.collection_slug, collectionTitle: r.collection_title,
   }

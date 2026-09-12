@@ -5,14 +5,38 @@
 import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { iconForUrl } from './Icons'
 
 export type Shot = {
   id: string
   url: string
   caption: string | null
   href: string | null
+  /** Where this image came from, if anywhere. */
+  linkUrl: string | null
   width: number | null
   height: number | null
+}
+
+/** A link with its service's mark, when the site recognises the host. */
+function SourceLink({ href, className = '' }: { href: string; className?: string }) {
+  const Icon = iconForUrl(href)
+  let label = 'Source'
+  try {
+    label = new URL(href).hostname.replace(/^www\.|^open\./, '')
+  } catch { /* keep the fallback */ }
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      onClick={(e) => e.stopPropagation()}
+      className={`inline-flex items-center gap-1.5 text-xs text-dim underline-offset-4 hover:text-accent ${className}`}
+    >
+      {Icon ? <Icon size={14} /> : null}
+      {Icon ? '' : label}
+    </a>
+  )
 }
 
 export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1 | 2 | 3 }) {
@@ -57,11 +81,11 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
     <>
       <div className={`${cols} gap-2 sm:gap-3`}>
         {shots.map((shot, i) => (
+          <figure key={shot.id} className="mb-2 break-inside-avoid sm:mb-3">
           <button
-            key={shot.id}
             type="button"
             onClick={() => setOpen(i)}
-            className="mb-2 block w-full cursor-zoom-in break-inside-avoid overflow-hidden sm:mb-3"
+            className="block w-full cursor-zoom-in overflow-hidden"
             aria-label={shot.caption ?? 'Open image'}
           >
             {shot.width && shot.height ? (
@@ -87,14 +111,16 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
                 />
               </span>
             )}
-            {/* Not a title and not a card — a drawing's number and date. Kept
-                small and quiet so the wall of images still reads as a wall. */}
-            {shot.caption && (
-              <span className="mt-1 block text-left text-xs text-dim tabular-nums">
-                {shot.caption}
-              </span>
-            )}
           </button>
+          {/* Not a title and not a card — a drawing's number, date and where it
+              came from. Kept small and quiet so the wall still reads as a wall. */}
+          {(shot.caption || shot.linkUrl) && (
+            <figcaption className="mt-1 flex items-center gap-2 text-xs text-dim">
+              {shot.caption && <span className="tabular-nums">{shot.caption}</span>}
+              {shot.linkUrl && <SourceLink href={shot.linkUrl} />}
+            </figcaption>
+          )}
+          </figure>
         ))}
       </div>
 
@@ -118,6 +144,9 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
             {current.caption && <p className="text-sm text-[#cfcabf]">{current.caption}</p>}
             {/* A gallery tap opens the lightbox, so an item with a body would
                 otherwise have an unreachable detail page. This is its way in. */}
+            {current.linkUrl && (
+              <SourceLink href={current.linkUrl} className="text-[#cfcabf]" />
+            )}
             {current.href && (
               <Link href={current.href} className="text-sm text-accent underline underline-offset-4">
                 Read more
