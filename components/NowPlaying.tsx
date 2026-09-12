@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useAudio } from './AudioProvider'
 
 function clock(seconds: number): string {
@@ -42,7 +43,18 @@ export default function NowPlaying() {
           )}
         </button>
 
-        <span className="min-w-0 shrink truncate text-sm">{current.title}</span>
+        {/* Naming the piece without leading back to it is a dead end once you
+            have wandered off to another page. */}
+        {current.href ? (
+          <Link
+            href={current.href}
+            className="min-w-0 shrink truncate text-sm underline-offset-4 hover:text-accent hover:underline"
+          >
+            {current.title}
+          </Link>
+        ) : (
+          <span className="min-w-0 shrink truncate text-sm">{current.title}</span>
+        )}
 
         <input
           type="range"

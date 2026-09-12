@@ -10,6 +10,8 @@ export type Track = {
   title: string
   /** Length measured at upload, so a duration exists before anything loads. */
   duration: number | null
+  /** Where the piece lives, so the bar can lead back to it. */
+  href: string | null
 }
 
 type AudioState = {

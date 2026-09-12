@@ -80,7 +80,9 @@ export default async function WorkPage({ params }: Props) {
         <article className="prose" dangerouslySetInnerHTML={{ __html: html }} />
 
         {audio.length > 0 && (
-          <div className="mt-10">{audio.map((m) => <AudioPlayer key={m.id} media={m} title={item.title} />)}</div>
+          <div className="mt-10">{audio.map((m) => (
+              <AudioPlayer key={m.id} media={m} title={item.title} href={`/work/${item.slug}`} />
+            ))}</div>
         )}
 
         {/* An item's own images render as a gallery too, so one item holding a

@@ -3,6 +3,7 @@ import AudioPlayer from '@/components/AudioPlayer'
 import InlineEmbed from '@/components/InlineEmbed'
 import { Blurb, DateText, ItemTitle, Links, Subtitle } from '@/components/Bits'
 import type { LayoutProps } from '@/lib/types'
+import { detailHref } from '@/lib/types'
 
 /**
  * Above this many players on one page, embeds collapse to click-to-play.
@@ -38,7 +39,9 @@ export default function List({ items, collection }: LayoutProps) {
         const embeds = showMedia ? item.media.filter((m) => m.kind === 'embed') : []
 
         return (
-          <li key={item.id} className={pad}>
+          // The id is what lets the now-playing bar scroll back to this exact
+          // row when the piece has no page of its own.
+          <li key={item.id} id={`item-${item.slug}`} className={`section-anchor ${pad}`}>
             <div className="flex items-baseline justify-between gap-4">
               <div className="min-w-0">
                 <span className="text-base"><ItemTitle item={item} /></span>
@@ -53,7 +56,15 @@ export default function List({ items, collection }: LayoutProps) {
 
             <Blurb item={item} collection={collection} className="mt-1 text-sm text-dim" />
 
-            {audio.map((m) => <AudioPlayer key={m.id} media={m} title={item.title} />)}
+            {audio.map((m) => (
+              <AudioPlayer
+                key={m.id}
+                media={m}
+                title={item.title}
+                // Its own page if it has one; otherwise back to this row.
+                href={detailHref(item) ?? `/${collection.slug}#item-${item.slug}`}
+              />
+            ))}
 
             {!audioWins && embeds.map((m) => (
               <InlineEmbed key={m.id} url={m.url} label={m.caption ?? 'Listen'} eager={eager} />

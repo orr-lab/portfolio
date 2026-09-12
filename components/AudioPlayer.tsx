@@ -17,7 +17,9 @@ function clock(seconds: number): string {
  * it also means this row and the bar at the top can never disagree about
  * what is playing or where it has got to.
  */
-export default function AudioPlayer({ media, title }: { media: Media; title: string }) {
+export default function AudioPlayer(
+  { media, title, href }: { media: Media; title: string; href: string | null },
+) {
   const { current, playing, at, length, play, toggle, seek } = useAudio()
 
   const isMine = current?.id === media.id
@@ -34,7 +36,10 @@ export default function AudioPlayer({ media, title }: { media: Media; title: str
           type="button"
           onClick={() => {
             if (isMine) toggle()
-            else play({ id: media.id, url: media.url, title, duration: media.durationSeconds })
+            else play({
+              id: media.id, url: media.url, title,
+              duration: media.durationSeconds, href,
+            })
           }}
           aria-label={isMine && playing ? `Pause ${title}` : `Play ${title}`}
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center border border-rule text-accent hover:border-accent"
