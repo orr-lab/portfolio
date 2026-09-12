@@ -128,7 +128,10 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
           {/* Not a title and not a card — a drawing's number, date and where it
               came from. Kept small and quiet so the wall still reads as a wall. */}
           {(shot.caption || shot.linkUrl) && (
-            <figcaption className="flex min-h-11 flex-wrap items-center gap-x-3 text-xs text-dim">
+            // No min-height here: it would centre a lone caption inside a 44px
+            // box and float it away from its picture. The link carries its own
+            // tap target, which is where that height belongs.
+            <figcaption className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-dim">
               {shot.caption && <span className="tabular-nums">{shot.caption}</span>}
               {shot.linkUrl && <SourceLink href={shot.linkUrl} />}
             </figcaption>
