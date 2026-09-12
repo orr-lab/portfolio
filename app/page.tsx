@@ -53,7 +53,7 @@ export default async function Hub() {
             >
               <h2 className="eyebrow">{collection.title}</h2>
               {collection.blurb && <p className="mt-3 mb-8 max-w-prose text-lg">{collection.blurb}</p>}
-              <Layout items={shown} collection={collection} />
+              <Layout items={shown} collection={collection} context="hub" />
               {/* Only shown when there is genuinely more, which also guarantees
                   the count is plural and the noun reads correctly. */}
               {total > limit && (

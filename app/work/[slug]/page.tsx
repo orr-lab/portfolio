@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Footer from '@/components/Footer'
+import { site } from '@/site.config'
 import type { Metadata } from 'next'
 import NavBar from '@/components/NavBar'
 import Lightbox, { type Shot } from '@/components/Lightbox'
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const found = await getItemBySlug(slug)
   if (!found) return {}
   return {
-    title: `${found.item.title} — Orr Knaan`,
+    title: `${found.item.title} — ${site.name}`,
     description: found.item.blurb ?? undefined,
   }
 }
@@ -87,7 +88,11 @@ export default async function WorkPage({ params }: Props) {
 
         {/* An item's own images render as a gallery too, so one item holding a
             hundred drawings works here exactly as it does on /[collection]. */}
-        {shots.length > 1 && <div className="mt-12"><Lightbox shots={shots} columns={3} /></div>}
+        {shots.length > 1 && (
+          <div className="mt-12">
+            <Lightbox groups={[{ key: 'all', label: null, shots }]} columns={3} />
+          </div>
+        )}
         {shots.length === 1 && (
           <div className="relative mt-12 w-full overflow-hidden" style={{ aspectRatio: '3 / 2' }}>
             <Cover media={images[0]} sizes="(max-width: 768px) 100vw, 768px" />

@@ -2,7 +2,8 @@ import Image from 'next/image'
 // Importing the file rather than naming its path gives Next the real pixel
 // dimensions at build time, so it reserves the right space and can generate
 // the tiny blurred placeholder used while the full image loads.
-import photo from '@/public/orr-knaan.jpg'
+import photo from '@/public/portrait.jpg'
+import { site } from '@/site.config'
 
 /**
  * Full-bleed, deliberately at the foot of the hub rather than above the
@@ -14,11 +15,12 @@ import photo from '@/public/orr-knaan.jpg'
  * while stopping the image from swallowing the whole viewport.
  */
 export default function Portrait() {
+  if (!site.portrait.enabled) return null
   return (
     <figure className="relative mt-8 w-full overflow-hidden aspect-[4/3] sm:aspect-[2/1]">
       <Image
         src={photo}
-        alt="Orr Knaan walking a mountain path, with a wooded valley and snow-covered peaks behind."
+        alt={site.portrait.alt}
         fill
         sizes="100vw"
         placeholder="blur"

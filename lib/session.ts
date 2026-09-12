@@ -5,7 +5,9 @@ import { cookies } from 'next/headers'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 
 const COOKIE = 'ok_admin'
-const PAYLOAD = 'orrknaan-admin-v1'
+// A domain separator for the HMAC, not a secret. Changing it invalidates
+// every existing session, which is why it carries a version rather than a name.
+const PAYLOAD = 'portfolio-admin-v1'
 
 function secret(): string {
   const p = process.env.ADMIN_PASSWORD

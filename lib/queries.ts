@@ -5,7 +5,7 @@ import type { Collection, Item, Layout } from './types'
 
 /** How many items each layout shows on the hub before the "All N →" link. */
 export const HUB_LIMITS: Record<Layout, number> = {
-  feature: 3, grid: 4, list: 6, gallery: 8, prose: 4, timeline: 5, index: 8,
+  feature: 3, grid: 4, list: 6, gallery: 4, prose: 4, timeline: 5, index: 8,
 }
 
 function toCollection(r: any): Collection {

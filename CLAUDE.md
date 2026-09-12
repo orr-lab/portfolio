@@ -1,6 +1,14 @@
-# orrknaan.com
+# Portfolio
 
-Personal portfolio for Orr Knaan. Work across film, music, code and drawing.
+A portfolio for work that does not all look alike. Anyone can fork it; the live
+example is Orr Knaan's at **orrknaan.com**. README.md is written for that
+forker — this file is for whoever is editing the code.
+
+**`site.config.ts` is the only file that names a person.** Name, tagline, URL,
+links, portrait. If you find a name, a domain or a social account anywhere
+else in `app/`, `components/` or `lib/`, that is a bug — put it in the config.
+`db/seed.ts` is the exception: it is the example content, and a fork is meant
+to replace it or run `db:seed:starter` instead.
 
 ## Stack
 
@@ -62,6 +70,15 @@ This is the ceiling. Do not add an eighth without asking Orr.
 | `prose` | writing | title, date, first lines of body. No image slot, no border |
 | `timeline` | chronological work | vertical rail, sticky year markers |
 | `index` | credits, education | one line, title left, year right. No blurb, no media |
+
+Layouts also receive `context` ('hub' or 'page'), because the home page shows
+only the first few items of a collection and a layout linking back to a row
+needs to know whether that row is on the page it is linking to.
+
+`gallery` groups by month, but only above both thresholds in
+`lib/sequence.ts` — enough images to scroll past and enough months for the
+headings to say something. Below either, the wall stays whole; grouping two
+months of drawings adds headings that carry no information.
 
 All seven take identical props, so every layout composes with every collection
 flag by construction. Combinations that must not break:

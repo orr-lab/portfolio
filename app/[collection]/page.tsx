@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Footer from '@/components/Footer'
+import { site } from '@/site.config'
 import type { Metadata } from 'next'
 import NavBar from '@/components/NavBar'
 import { layoutFor } from '@/components/layouts'
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const collection = await getCollection(slug)
   if (!collection) return {}
   return {
-    title: `${collection.title} — Orr Knaan`,
+    title: `${collection.title} — ${site.name}`,
     description: collection.blurb ?? undefined,
   }
 }

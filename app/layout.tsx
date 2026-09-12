@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Archivo, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 import AudioProvider from '@/components/AudioProvider'
+import { site } from '@/site.config'
 import NowPlaying from '@/components/NowPlaying'
 
 // next/font downloads these at build time and serves them from our own domain,
@@ -25,14 +26,14 @@ const display = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
-  title: 'Orr Knaan',
-  description: 'I make things across film, music, code and drawing.',
-  metadataBase: new URL('https://orrknaan.com'),
+  title: site.name,
+  description: site.tagline,
+  metadataBase: new URL(site.url),
   openGraph: {
-    title: 'Orr Knaan',
-    description: 'I make things across film, music, code and drawing.',
-    url: 'https://orrknaan.com',
-    siteName: 'Orr Knaan',
+    title: site.name,
+    description: site.tagline,
+    url: site.url,
+    siteName: site.name,
     type: 'website',
   },
 }

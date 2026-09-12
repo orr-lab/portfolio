@@ -7,6 +7,7 @@ import { collectionWarnings } from '@/lib/validation'
 import { slugify } from '@/lib/slug'
 import type { Collection, Density, Item, Layout, MediaMode, SortMode } from '@/lib/types'
 import { Field, inputClass } from './Field'
+import { siteHost } from '@/site.config'
 
 const LAYOUT_ORDER: Layout[] = ['feature', 'grid', 'list', 'gallery', 'prose', 'timeline', 'index']
 
@@ -97,7 +98,7 @@ export default function CollectionForm({
           />
         </Field>
 
-        <Field label="Address" hint={v.slug ? `orrknaan.com/${v.slug}` : 'Filled in from the title.'}>
+        <Field label="Address" hint={v.slug ? `${siteHost()}/${v.slug}` : 'Filled in from the title.'}>
           <input
             name="slug"
             value={v.slug}

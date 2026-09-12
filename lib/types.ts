@@ -67,6 +67,12 @@ export type Collection = {
 export type LayoutProps = {
   items: Item[]
   collection: Collection
+  /**
+   * Where this render is happening. The home page shows only the first few
+   * items of each collection, so a layout that wants to link back to a row
+   * needs to know whether that row is on the page it is linking to.
+   */
+  context?: 'hub' | 'page'
 }
 
 /** The cover is the first media row, but only when the collection shows one. */

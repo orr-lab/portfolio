@@ -13,7 +13,7 @@ import { detailHref } from '@/lib/types'
 const EAGER_EMBED_LIMIT = 8
 
 /** Compact rows. For compositions. Must stay comfortable at forty items. */
-export default function List({ items, collection }: LayoutProps) {
+export default function List({ items, collection, context = 'page' }: LayoutProps) {
   const pad = collection.density === 'compact' ? 'py-3' : 'py-5'
   const showMedia = collection.mediaMode !== 'none'
 
@@ -61,8 +61,17 @@ export default function List({ items, collection }: LayoutProps) {
                 key={m.id}
                 media={m}
                 title={item.title}
-                // Its own page if it has one; otherwise back to this row.
-                href={detailHref(item) ?? `/${collection.slug}#item-${item.slug}`}
+                // Its own page if it has one. Otherwise back to the row you
+                // pressed play on — which is the home page when that is where
+                // you started, and the collection page when it is not. Linking
+                // blindly to the home page would miss any piece past the first
+                // few it shows.
+                href={
+                  detailHref(item)
+                  ?? (context === 'hub'
+                    ? `/#item-${item.slug}`
+                    : `/${collection.slug}#item-${item.slug}`)
+                }
               />
             ))}
 

@@ -1,11 +1,5 @@
-import { iconForUrl } from './Icons'
-
-export const CONTACT = {
-  youtube: 'https://www.youtube.com/@orrknaan',
-  instagram: 'https://www.instagram.com/orrknaan/',
-  github: 'https://github.com/orr-lab',
-  email: 'orrknaan@gmail.com',
-}
+import { iconForUrl, serviceNameFor } from './Icons'
+import { site } from '@/site.config'
 
 export default function Hero() {
   // 44px boxes around 21px marks: the icon is the thing you see, the box is
@@ -14,34 +8,39 @@ export default function Hero() {
 
   return (
     <header className="pt-20 pb-14 sm:pt-28 sm:pb-20">
-      <h1 className="display text-4xl sm:text-5xl">Orr Knaan</h1>
-      <p className="mt-5 max-w-md text-lg text-dim">
-        I make things across film, music, code and drawing.
-      </p>
-      {/* Negative margin pulls the first icon's padding back so the row lines
-          up with the text above it rather than looking indented. */}
-      {/* Built from the same registry the item links use, so a service taught
-          to the site once shows up in both places. */}
+      <h1 className="display text-4xl sm:text-5xl">{site.name}</h1>
+      <p className="mt-5 max-w-md text-lg text-dim">{site.tagline}</p>
+
+      {/* One list in site.config drives this. A service with a mark shows it;
+          anything else falls back to its name, which is why GitHub reads as a
+          word rather than a badly redrawn octocat. */}
       <nav className="mt-4 -ml-3 flex flex-wrap items-center gap-y-1">
-        {([
-          ['Orr Knaan on YouTube', CONTACT.youtube],
-          ['Orr Knaan on Instagram', CONTACT.instagram],
-          [`Email ${CONTACT.email}`, `mailto:${CONTACT.email}`],
-        ] as const).map(([label, href]) => {
+        {site.links.map((href) => {
           const Icon = iconForUrl(href)
+          const name = serviceNameFor(href)
           return Icon ? (
-            <a key={href} href={href} aria-label={label}
-               target={href.startsWith('mailto:') ? undefined : '_blank'}
-               rel="noreferrer" className={hit}>
+            <a
+              key={href}
+              href={href}
+              aria-label={`${site.name} on ${name}`}
+              target={href.startsWith('mailto:') ? undefined : '_blank'}
+              rel="noreferrer"
+              className={hit}
+            >
               <Icon />
             </a>
-          ) : null
+          ) : (
+            <a
+              key={href}
+              href={href}
+              target={href.startsWith('mailto:') ? undefined : '_blank'}
+              rel="noreferrer"
+              className="ml-2 inline-flex h-11 items-center text-sm text-accent underline-offset-4 hover:underline"
+            >
+              {name.toLowerCase()} ↗
+            </a>
+          )
         })}
-        {/* Text, because the octocat cannot be redrawn faithfully by hand. */}
-        <a href={CONTACT.github} target="_blank" rel="noreferrer"
-           className="ml-2 inline-flex h-11 items-center text-sm text-accent underline-offset-4 hover:underline">
-          github ↗
-        </a>
       </nav>
     </header>
   )

@@ -44,7 +44,14 @@ function SourceLink({ href, big = false }: { href: string; big?: boolean }) {
   )
 }
 
-export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1 | 2 | 3 }) {
+export type ShotGroup = { key: string; label: string | null; shots: Shot[] }
+
+export default function Lightbox(
+  { groups, columns }: { groups: ShotGroup[]; columns: 1 | 2 | 3 },
+) {
+  // Navigation runs over every image on the page, so the arrows carry on
+  // across a month heading instead of stopping at it.
+  const shots = groups.flatMap((g) => g.shots)
   // useState holds a value that survives re-renders. `open` is the index of the
   // image being viewed, or null when the lightbox is closed. Calling setOpen
   // re-renders this component with the new value.
@@ -92,8 +99,17 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
 
   return (
     <>
-      <div className={`${cols} gap-2 sm:gap-3`}>
-        {shots.map((shot, i) => (
+      {groups.map((group) => (
+        <section key={group.key} className={group.label ? 'mt-8 first:mt-0' : ''}>
+          {group.label && (
+            <h3 className="eyebrow mb-3 border-t border-rule pt-3">{group.label}</h3>
+          )}
+          <div className={`${cols} gap-2 sm:gap-3`}>
+        {group.shots.map((shot) => {
+          // Index within the whole wall, so opening any tile lands the viewer
+          // in the right place regardless of which month it sits under.
+          const i = shots.indexOf(shot)
+          return (
           <figure key={shot.id} className="mb-2 break-inside-avoid sm:mb-3">
           <button
             type="button"
@@ -137,8 +153,11 @@ export default function Lightbox({ shots, columns }: { shots: Shot[]; columns: 1
             </figcaption>
           )}
           </figure>
-        ))}
-      </div>
+          )
+        })}
+          </div>
+        </section>
+      ))}
 
       {current && (
         <div

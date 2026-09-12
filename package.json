@@ -10,7 +10,8 @@
     "lint": "tsc --noEmit",
     "db:migrate": "node --env-file-if-exists=.env.local db/migrate.ts",
     "db:seed": "node --env-file-if-exists=.env.local db/seed.ts",
-    "db:check": "node --env-file-if-exists=.env.local db/check.ts"
+    "db:check": "node --env-file-if-exists=.env.local db/check.ts",
+    "db:seed:starter": "node --env-file-if-exists=.env.local db/seed-starter.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -27,5 +28,11 @@
     "@types/react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
+  },
+  "description": "A portfolio site for work that does not all look alike. Seven layouts, everything editable from a phone.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/orr-lab/portfolio.git"
   }
 }

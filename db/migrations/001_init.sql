@@ -1,4 +1,4 @@
--- orrknaan.com — initial schema.
+-- Initial schema.
 --
 -- The shape here is doing real work. Read the constraints as documentation:
 -- they are what stops /admin from producing a state the site cannot render.

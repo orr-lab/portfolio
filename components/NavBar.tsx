@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { Collection } from '@/lib/types'
+import { site } from '@/site.config'
 
 type Props = {
   collections: Collection[]
@@ -90,7 +91,7 @@ export default function NavBar({ collections, mode, activeSlug }: Props) {
     >
       <div className="mx-auto flex max-w-4xl items-center gap-4 px-6 py-3 sm:px-8">
         <Link href="/" className="shrink-0 text-sm tracking-tight hover:text-accent">
-          Orr Knaan
+          {site.name}
         </Link>
         {/* One horizontally scrollable row on a phone. Never a hamburger. */}
         <nav className="-mx-2 flex flex-1 gap-4 overflow-x-auto px-2 sm:justify-end [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
